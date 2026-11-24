@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import Link from "next/link";
-import { gsap } from "@/lib/gsap";
+import { gsap } from "@/lib/gsap-draw";
 import { prefersReducedMotion } from "@/lib/motion";
 import { site } from "@/lib/site";
 import { useDict, useLocale } from "@/components/Providers";
 import { MagneticButton } from "@/components/motion/MagneticButton";
+import { AddressBlock } from "@/components/ui/AddressBlock";
 
 type Variant = "general" | "short" | "hair";
 
@@ -32,8 +33,11 @@ export function ConsultationForm({ variant, specialties = [], hairSpecialty, doc
   const dict = useDict();
   const f = dict.form;
   const { locale } = useLocale();
+  const uid = useId();
+  const fid = (name: string) => `${uid}-${name}`;
   const check = useRef<SVGPathElement>(null);
   const [status, setStatus] = useState<"idle" | "sent">("idle");
+  const [draftUrl, setDraftUrl] = useState("");
   const [errors, setErrors] = useState<Errors>({});
   const [selects, setSelects] = useState<Record<string, string>>({ specialty: defaultSpecialty });
 
@@ -41,6 +45,11 @@ export function ConsultationForm({ variant, specialties = [], hairSpecialty, doc
   const hairChosen = variant !== "hair" && hairSpecialty && selects.specialty === hairSpecialty;
 
   const setSelect = (name: string, value: string) => setSelects((s) => ({ ...s, [name]: value }));
+
+  const clearError = (e: FormEvent<HTMLFormElement>) => {
+    const name = (e.target as HTMLInputElement).name as keyof Errors;
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: undefined }));
+  };
 
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,7 +63,7 @@ export function ConsultationForm({ variant, specialties = [], hairSpecialty, doc
     setErrors(next);
     const first = (["name", "phone", "consent"] as const).find((k) => next[k]);
     if (first) {
-      requestAnimationFrame(() => formEl.querySelector<HTMLInputElement>(`#cf-${first}`)?.focus());
+      requestAnimationFrame(() => document.getElementById(fid(first))?.focus());
       return;
     }
 
@@ -89,6 +98,7 @@ export function ConsultationForm({ variant, specialties = [], hairSpecialty, doc
 
     // Open the draft inside the click so popup blockers allow it.
     window.open(url, "_blank", "noopener");
+    setDraftUrl(url);
     setStatus("sent");
     if (check.current && !prefersReducedMotion()) {
       gsap.fromTo(check.current, { drawSVG: "0%" }, { drawSVG: "100%", duration: 0.9, ease: "primeInOut", delay: 0.2 });
@@ -99,25 +109,30 @@ export function ConsultationForm({ variant, specialties = [], hairSpecialty, doc
     return (
       <div className="card-prime">
         <p className="text-body-lg text-theme">{f.unavailable}</p>
-        <p className="text-body mt-3 text-theme-muted">{site.address[locale]}</p>
+        <AddressBlock className="mt-stack-sm" address={site.address[locale]} mapLabel={dict.common.openMap} />
+        {site.phone && (
+          <a href={`tel:${site.phone}`} dir="ltr" className="link-line tap-target text-body-lg mt-4 text-theme">
+            {site.phone}
+          </a>
+        )}
       </div>
     );
   }
 
   return (
-    <form onSubmit={submit} noValidate>
+    <form onSubmit={submit} onChange={clearError} noValidate>
       <div className="flex flex-col gap-4">
-        <Field id="name" label={f.name} error={errors.name} autoComplete="name" />
-        <Field id="phone" label={f.phone} error={errors.phone} type="tel" autoComplete="tel" inputMode="tel" />
+        <Field id={fid("name")} name="name" label={f.name} error={errors.name} autoComplete="name" required />
+        <Field id={fid("phone")} name="phone" label={f.phone} error={errors.phone} type="tel" autoComplete="tel" inputMode="tel" required />
 
         {variant === "hair" ? (
           <>
-            <Select name="age" label={f.ageRange} options={f.ageOptions} value={selects.age ?? ""} onChange={setSelect} />
-            <Select name="concern" label={f.concern} options={f.concernOptions} value={selects.concern ?? ""} onChange={setSelect} />
-            <Field id="bestTime" label={f.bestTime} />
+            <Select id={fid("age")} name="age" label={f.ageRange} options={f.ageOptions} value={selects.age ?? ""} onChange={setSelect} />
+            <Select id={fid("concern")} name="concern" label={f.concern} options={f.concernOptions} value={selects.concern ?? ""} onChange={setSelect} />
+            <Field id={fid("bestTime")} name="bestTime" label={f.bestTime} />
           </>
         ) : (
-          <Select name="specialty" label={f.specialty} options={specialties} value={selects.specialty ?? ""} onChange={setSelect} />
+          <Select id={fid("specialty")} name="specialty" label={f.specialty} options={specialties} value={selects.specialty ?? ""} onChange={setSelect} />
         )}
 
         {hairChosen && (
@@ -132,6 +147,7 @@ export function ConsultationForm({ variant, specialties = [], hairSpecialty, doc
           <>
             {doctors.length > 0 && (
               <Select
+                id={fid("doctor")}
                 name="doctor"
                 label={f.doctor}
                 options={[f.anyDoctor, ...doctors]}
@@ -139,14 +155,14 @@ export function ConsultationForm({ variant, specialties = [], hairSpecialty, doc
                 onChange={setSelect}
               />
             )}
-            <Field id="time" label={f.time} />
+            <Field id={fid("time")} name="time" label={f.time} />
           </>
         )}
 
         {variant === "short" && (
           <div className="field">
-            <textarea id="cf-message" name="message" rows={3} placeholder=" " />
-            <label htmlFor="cf-message">{f.message}</label>
+            <textarea id={fid("message")} name="message" rows={3} placeholder=" " />
+            <label htmlFor={fid("message")}>{f.message}</label>
             <span className="field-line" />
             <span className="field-line-draw" aria-hidden />
           </div>
@@ -158,12 +174,13 @@ export function ConsultationForm({ variant, specialties = [], hairSpecialty, doc
           <div>
             <label className="flex cursor-pointer items-start gap-3 py-1 text-body text-theme-muted">
               <input
-                id="cf-consent"
+                id={fid("consent")}
                 name="consent"
                 type="checkbox"
+                required
                 className="mt-[0.3em] h-5 w-5 shrink-0 cursor-pointer accent-[var(--accent)]"
                 aria-invalid={Boolean(errors.consent)}
-                aria-describedby={errors.consent ? "cf-consent-error" : undefined}
+                aria-describedby={errors.consent ? `${fid("consent")}-error` : undefined}
               />
               <span>
                 {f.consent}{" "}
@@ -178,7 +195,7 @@ export function ConsultationForm({ variant, specialties = [], hairSpecialty, doc
               </span>
             </label>
             {errors.consent && (
-              <p id="cf-consent-error" className="field-error">
+              <p id={`${fid("consent")}-error`} className="field-error">
                 {errors.consent}
               </p>
             )}
@@ -196,6 +213,14 @@ export function ConsultationForm({ variant, specialties = [], hairSpecialty, doc
               </svg>
               <div className="text-body-lg max-w-[36ch]">
                 {success ?? (target === "whatsapp" ? f.successWhatsapp : f.successEmail)}
+                <span className="mt-4 flex flex-wrap gap-x-6 gap-y-1 text-label">
+                  <a href={draftUrl} target="_blank" rel="noreferrer" className="link-line tap-target">
+                    {f.openAgain}
+                  </a>
+                  <button type="button" className="link-line tap-target" onClick={() => setStatus("idle")}>
+                    {f.edit}
+                  </button>
+                </span>
               </div>
             </div>
           )}
@@ -212,34 +237,36 @@ export function ConsultationForm({ variant, specialties = [], hairSpecialty, doc
 
 type FieldProps = {
   id: string;
+  name: string;
   label: string;
   error?: string;
   type?: string;
   autoComplete?: string;
   inputMode?: "tel" | "text" | "email";
+  required?: boolean;
 };
 
-function Field({ id, label, error, type = "text", autoComplete, inputMode }: FieldProps) {
-  const fid = `cf-${id}`;
+function Field({ id, name, label, error, type = "text", autoComplete, inputMode, required }: FieldProps) {
   return (
     <div>
       <div className={`field ${error ? "has-error" : ""}`}>
         <input
-          id={fid}
-          name={id}
+          id={id}
+          name={name}
           type={type}
           placeholder=" "
           autoComplete={autoComplete}
           inputMode={inputMode}
+          required={required}
           aria-invalid={Boolean(error)}
-          aria-describedby={error ? `${fid}-error` : undefined}
+          aria-describedby={error ? `${id}-error` : undefined}
         />
-        <label htmlFor={fid}>{label}</label>
+        <label htmlFor={id}>{label}</label>
         <span className="field-line" />
         <span className="field-line-draw" aria-hidden />
       </div>
       {error && (
-        <p id={`${fid}-error`} className="field-error">
+        <p id={`${id}-error`} className="field-error">
           {error}
         </p>
       )}
@@ -248,6 +275,7 @@ function Field({ id, label, error, type = "text", autoComplete, inputMode }: Fie
 }
 
 type SelectProps = {
+  id: string;
   name: string;
   label: string;
   options: string[];
@@ -255,11 +283,10 @@ type SelectProps = {
   onChange: (name: string, value: string) => void;
 };
 
-function Select({ name, label, options, value, onChange }: SelectProps) {
-  const fid = `cf-${name}`;
+function Select({ id, name, label, options, value, onChange }: SelectProps) {
   return (
     <div className="field">
-      <select id={fid} name={name} className={value ? "has-value" : ""} value={value} onChange={(e) => onChange(name, e.target.value)}>
+      <select id={id} name={name} className={value ? "has-value" : ""} value={value} onChange={(e) => onChange(name, e.target.value)}>
         <option value="" />
         {options.map((opt) => (
           <option key={opt} value={opt}>
@@ -267,7 +294,7 @@ function Select({ name, label, options, value, onChange }: SelectProps) {
           </option>
         ))}
       </select>
-      <label htmlFor={fid}>{label}</label>
+      <label htmlFor={id}>{label}</label>
       <span className="field-line" />
       <span className="field-line-draw" aria-hidden />
       <span className="pointer-events-none absolute bottom-5 end-1 h-2 w-2 rotate-45 border-b border-e border-current opacity-60" aria-hidden />

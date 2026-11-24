@@ -23,7 +23,7 @@ export default async function DoctorPage({ params }: PageProps<"/[locale]/doctor
   if (!isLocale(locale) || !doctor) notFound();
   const path = `/doctors/${slug}`;
   return (
-    <main>
+    <main id="main">
       <JsonLd
         data={[
           physicianSchema(doctor, locale),

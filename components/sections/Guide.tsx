@@ -11,7 +11,7 @@ type Props = { label: string; title: string; cards: Card[]; all: { label: string
 export function Guide({ label, title, cards, all, readLabel }: Props) {
   if (!cards.length) return null;
   return (
-    <section id="guide" data-theme-section="grey" className="section-y relative z-10 !pb-0">
+    <section id="guide" data-theme-section="grey" className="relative z-10 pt-section">
       <div className="container-prime">
         <div className="mb-head flex flex-wrap items-end justify-between gap-6">
           <div>
@@ -36,7 +36,8 @@ export function Guide({ label, title, cards, all, readLabel }: Props) {
   );
 }
 
-export function ArticleCard({ card, readLabel }: { card: Card; readLabel: string }) {
+export function ArticleCard({ card, readLabel, level = 3 }: { card: Card; readLabel: string; level?: 2 | 3 }) {
+  const Heading = level === 2 ? "h2" : "h3";
   return (
     <Link
       href={card.href}
@@ -44,7 +45,7 @@ export function ArticleCard({ card, readLabel }: { card: Card; readLabel: string
     >
       <div>
         <p className="text-label mb-stack-sm text-accent">{card.tag}</p>
-        <h3 className="font-display text-display-sm text-balance text-theme">{card.title}</h3>
+        <Heading className="font-display text-display-sm text-balance text-theme">{card.title}</Heading>
         <p className="text-body mt-4 line-clamp-3 text-theme-muted">{card.excerpt}</p>
       </div>
       <span className="text-label inline-flex items-center gap-2 text-theme">

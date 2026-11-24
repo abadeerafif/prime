@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { dirFor, isLocale, locales } from "@/lib/i18n";
-import { fontVariables } from "@/lib/fonts";
+import { AL_TARIKH_URL, fontVariables } from "@/lib/fonts";
 import { site } from "@/lib/site";
-import { getDictionary } from "@/dictionaries";
+import { clientDictFor, dictFor, getDictionary } from "@/dictionaries";
 import { Providers } from "@/components/Providers";
 import "../globals.css";
 
@@ -21,16 +21,16 @@ export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Pr
     metadataBase: new URL(site.url),
     openGraph: {
       siteName: site.name[locale],
-      images: [{ url: "/brand/logo-landscape-charcoal.png", width: 1024, height: 300 }],
+      images: [{ url: "/brand/logo-landscape-charcoal.png", width: 1154, height: 339 }],
     },
-    icons: { icon: "/brand/logo-icon.png" },
+    icons: { icon: "/brand/logo-icon-168.png" },
   };
 }
 
 export default async function RootLayout({ children, params }: LayoutProps<"/[locale]">) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  const dict = await getDictionary(locale);
+  const dict = clientDictFor(locale);
   const adobeKit = process.env.NEXT_PUBLIC_ADOBE_KIT_ID;
 
   return (
@@ -42,6 +42,12 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[lo
       suppressHydrationWarning
     >
       <head>
+        {locale === "ar" ? <link rel="preload" href={AL_TARIKH_URL} as="font" type="font/woff2" crossOrigin="anonymous" /> : null}
+        <noscript
+          dangerouslySetInnerHTML={{
+            __html: "<style>[data-preloader]{display:none!important}[data-reveal]{opacity:1!important}.invisible{visibility:visible!important}</style>",
+          }}
+        />
         {adobeKit ? (
           <link rel="stylesheet" href={`https://use.typekit.net/${adobeKit}.css`} />
         ) : null}
@@ -50,6 +56,9 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[lo
         ) : null}
       </head>
       <body className="min-h-full">
+        <a href="#main" className="skip-link">
+          {dictFor(locale).common.skipToContent}
+        </a>
         <Providers locale={locale} dict={dict}>
           {children}
         </Providers>

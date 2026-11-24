@@ -22,7 +22,7 @@ type Props = {
  */
 export function Philosophy({ label, statement: statementText, pillars: items, link }: Props) {
   const section = useRef<HTMLElement>(null);
-  const statement = useRef<HTMLParagraphElement>(null);
+  const statement = useRef<HTMLHeadingElement>(null);
   const pillars = useRef<HTMLDivElement>(null);
   const [pinned, setPinned] = useState(false);
   const { sign } = useLocale();
@@ -113,12 +113,12 @@ export function Philosophy({ label, statement: statementText, pillars: items, li
           <SectionLabel className="mb-stack-lg">{label}</SectionLabel>
 
           <div className="relative">
-            <p
+            <h2
               ref={statement}
               className="font-display text-display-md invisible max-w-[22ch] text-balance text-theme lg:text-display-lg"
             >
               {statementText}
-            </p>
+            </h2>
 
             <div
               ref={pillars}

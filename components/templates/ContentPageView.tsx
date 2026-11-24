@@ -10,9 +10,6 @@ import { OnThisPage } from "@/components/ui/OnThisPage";
 import { DoctorCard } from "@/components/ui/DoctorCard";
 import { CtaBand } from "@/components/ui/CtaBand";
 import { RelatedLinks } from "@/components/ui/RelatedLinks";
-import { Disclaimer } from "@/components/ui/Disclaimer";
-import { ScrollProgress } from "@/components/motion/ScrollProgress";
-
 type Props = {
   page: ContentPage;
   locale: Locale;
@@ -34,7 +31,6 @@ export function ContentPageView({ page, locale, path, tone, label, bookHref = "/
 
   return (
     <>
-      <ScrollProgress />
       <PageHero
         locale={locale}
         path={path}
@@ -62,9 +58,6 @@ export function ContentPageView({ page, locale, path, tone, label, bookHref = "/
           </div>
         </div>
         <RelatedLinks locale={locale} paths={page.related} title={dict.common.related} />
-        <div className="container-prime mt-head">
-          <Disclaimer locale={locale} className="measure border-t border-theme pt-6" />
-        </div>
       </div>
 
       <CtaBand

@@ -1,7 +1,4 @@
 /** Shared motion tokens so every component moves with the same character. */
-export const EASE = "prime" as const;
-export const EASE_IN_OUT = "primeInOut" as const;
-
 export const DUR = {
   fast: 0.3,
   base: 0.9,
@@ -23,9 +20,4 @@ export function prefersReducedMotion(): boolean {
 export function isTouchDevice(): boolean {
   if (typeof window === "undefined") return false;
   return window.matchMedia("(hover: none), (pointer: coarse)").matches;
-}
-
-export function isDesktop(): boolean {
-  if (typeof window === "undefined") return true;
-  return window.matchMedia("(min-width: 64rem)").matches;
 }

@@ -27,7 +27,7 @@ export default async function FaqPage({ params }: PageProps<"/[locale]/faq">) {
   if (!isLocale(locale)) notFound();
   const d = dictFor(locale);
   return (
-    <main>
+    <main id="main">
       <JsonLd data={[breadcrumbSchema(locale, PATH), faqSchema(blockFaqs([generalFaq]), locale)]} />
       <PageHero locale={locale} path={PATH} h1={t(corporate.faq.h1, locale)} tone="dark" />
       <section data-theme-section="paper" className="section-y relative z-10">

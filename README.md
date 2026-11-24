@@ -21,14 +21,16 @@ Copy `.env.example` to `.env.local` and fill in:
 
 ## Structure
 
-- `app/[locale]/` — root layout (fonts, `lang`/`dir`, metadata) and the page
+- `app/[locale]/` — root layout (fonts, `lang`/`dir`, metadata); `(main)` holds the clinic site, `hair-transplant/(site)` the hair mini-site and `hair-transplant/(focus)` its distraction-free booking page
 - `proxy.ts` — locale redirect from `/` using cookie, then `Accept-Language`
-- `dictionaries/` — all copy (`en.json`, `ar.json`)
-- `components/sections/` — Preloader, Navigation, Hero, Philosophy, Treatments, Experience, Journey, Booking, Footer
-- `components/motion/` — SmoothScroll (Lenis + GSAP), SplitReveal, Reveal, ImageReveal, Parallax, MagneticButton, Cursor, ThemeShift, ScrollProgress
+- `dictionaries/` — UI strings (`en.json`, `ar.json`); only `clientDictFor` reaches the browser
+- `content/` — bilingual page content, the route registry and `PENDING.md` (items awaiting clinic confirmation)
+- `components/sections/` — Preloader, Navigation, Hero, TrustStrip, Philosophy, Treatments, HairBand, Team, Guide, HomeFaq, Journey, Booking, Footer
+- `components/motion/` — SmoothScroll (Lenis + GSAP), SplitReveal, Reveal, ImageReveal, MagneticButton, ThemeShift, ScrollProgress
+- `components/ui/` and `components/templates/` — shared blocks (PageHero, NumberedList, AddressBlock, ContactRows, cards) and page templates
 - `components/bloom/` — `BloomMark` (the bloom as strokeable SVG) and `BloomStage` (the persistent scroll-driven bloom)
-- `lib/motion.ts` — shared easing and duration tokens; `lib/gsap.ts` registers plugins and the `prime` eases
-- `public/brand/` — URL-safe copies of the logos and icons; `public/fonts/` — Avenir, Al Tarikh and Palestine as woff2
+- `lib/motion.ts` — shared duration and stagger tokens; `lib/gsap.ts` registers plugins and the `prime` eases
+- `public/brand/` — logos (full-size originals for Open Graph, `-480`/`-384`/`-168` copies sized for display) and icons; `public/fonts/` — Avenir and Al Tarikh as woff2
 
 ## Replacing placeholders
 
@@ -40,5 +42,7 @@ Copy `.env.example` to `.env.local` and fill in:
 ## Notes
 
 - Page colour shifts are driven by `data-theme-section` on each section (`ivory`, `grey`, `wood`, `charcoal`) and mirrored onto `<html data-theme>`.
-- `prefers-reduced-motion` disables smooth scroll, pinning, parallax and draw animations.
+- `prefers-reduced-motion` disables smooth scroll, pinning, parallax, reveals and draw animations.
+- Inner-page heroes and the header enter with CSS only (`.enter` in `globals.css`) so the headline paints before JavaScript loads; everything below the fold still uses GSAP.
+- Fonts: Avenir and Fraunces are preloaded everywhere; Al Tarikh is preloaded on Arabic pages only (declared in `globals.css`), and IBM Plex Sans Arabic loads on demand.
 - In development, append `#slow-intro` to the URL to watch the preloader choreography at reduced speed.

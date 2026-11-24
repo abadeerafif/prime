@@ -53,7 +53,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       <JsonLd data={clinicSchema(locale)} />
       <Preloader tagline={d.preloader.tagline} />
       <BloomStage />
-      <main id="top" className="relative z-10">
+      <main id="main" className="relative z-10">
         <Hero
           brand={L(home.hero.brand)}
           lines={home.hero.lines[locale]}

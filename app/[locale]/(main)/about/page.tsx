@@ -27,7 +27,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
   if (!isLocale(locale)) notFound();
   const d = dictFor(locale);
   return (
-    <main>
+    <main id="main">
       <JsonLd data={breadcrumbSchema(locale, PATH)} />
       <PageHero locale={locale} path={PATH} h1={t(about.h1, locale)} heroLine={t(home.pillars[1].title, locale)} tone="dark" />
       <section data-theme-section="paper" className="section-y relative z-10">
@@ -40,7 +40,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
           </Reveal>
         </div>
 
-        <div className="container-prime section-y !pb-0">
+        <div className="container-prime pt-section">
           <h2 className="text-label mb-stack text-accent">{d.common.values}</h2>
           <ul className="grid grid-cols-2 gap-px overflow-hidden rounded-card border border-theme bg-[var(--line)] md:grid-cols-5" role="list">
             {about.values.map((v, i) => (

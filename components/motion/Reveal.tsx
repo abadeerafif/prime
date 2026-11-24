@@ -2,7 +2,7 @@
 
 import { useRef, type CSSProperties, type ElementType, type ReactNode } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
-import { DUR } from "@/lib/motion";
+import { DUR, prefersReducedMotion } from "@/lib/motion";
 
 type Props = {
   children: ReactNode;
@@ -36,6 +36,10 @@ export function Reveal({
   useGSAP(
     () => {
       if (!ref.current || trigger === "manual") return;
+      if (prefersReducedMotion()) {
+        gsap.set(ref.current, { autoAlpha: 1 });
+        return;
+      }
       gsap.fromTo(
         ref.current,
         { autoAlpha: 0, y },

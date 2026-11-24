@@ -4,7 +4,7 @@ import { createContext, Suspense, useContext, useEffect, useMemo, useState, type
 import type { Locale } from "@/lib/i18n";
 import { dirFor } from "@/lib/i18n";
 import { ScrollTrigger } from "@/lib/gsap";
-import type { Dictionary } from "@/dictionaries";
+import type { ClientDictionary } from "@/dictionaries";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { ScrollProgress } from "@/components/motion/ScrollProgress";
 import { RouteEffects } from "@/components/RouteEffects";
@@ -17,15 +17,15 @@ type IntroCtx = { introDone: boolean; setIntroDone: (v: boolean) => void };
 const IntroContext = createContext<IntroCtx>({ introDone: false, setIntroDone: () => {} });
 export const useIntro = () => useContext(IntroContext);
 
-const DictContext = createContext<Dictionary | null>(null);
-/** UI strings for client components; server components call getDictionary directly. */
-export function useDict(): Dictionary {
+const DictContext = createContext<ClientDictionary | null>(null);
+/** UI strings for client components; server components call dictFor directly. */
+export function useDict(): ClientDictionary {
   const dict = useContext(DictContext);
   if (!dict) throw new Error("useDict must be used inside <Providers>");
   return dict;
 }
 
-type Props = { locale: Locale; dict: Dictionary; children: ReactNode };
+type Props = { locale: Locale; dict: ClientDictionary; children: ReactNode };
 
 export function Providers({ locale, dict, children }: Props) {
   const [introDone, setIntroDone] = useState(false);

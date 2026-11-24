@@ -11,3 +11,15 @@ export const getDictionary = async (locale: Locale) => dictionaries[locale];
 
 /** Synchronous access for server components that render inside a page. */
 export const dictFor = (locale: Locale) => dictionaries[locale];
+
+/** The few strings client components read; the rest never leaves the server. */
+export type ClientDictionary = {
+  form: Dictionary["form"];
+  hairNav: Pick<Dictionary["hairNav"], "cta">;
+  common: Pick<Dictionary["common"], "openMap">;
+};
+
+export const clientDictFor = (locale: Locale): ClientDictionary => {
+  const d = dictionaries[locale];
+  return { form: d.form, hairNav: { cta: d.hairNav.cta }, common: { openMap: d.common.openMap } };
+};

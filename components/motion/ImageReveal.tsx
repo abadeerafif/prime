@@ -85,7 +85,7 @@ export function ImageReveal({
 
   return (
     <div ref={outer} className={`${className ?? ""} invisible overflow-hidden`}>
-      <div ref={inner} className={`${innerClassName ?? ""} h-full w-full will-change-transform`}>
+      <div ref={inner} className={`${innerClassName ?? ""} h-full w-full ${parallax ? "will-change-transform" : ""}`}>
         {children}
       </div>
     </div>

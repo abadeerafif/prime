@@ -21,7 +21,7 @@ export function legalPage(page: ContentPage) {
     const { locale } = await params;
     if (!isLocale(locale) || !isPathVisible(path)) notFound();
     return (
-      <main>
+      <main id="main">
         <ContentPageView page={page} locale={locale} path={path} tone="dark" notice={dictFor(locale).common.draftNotice} />
       </main>
     );

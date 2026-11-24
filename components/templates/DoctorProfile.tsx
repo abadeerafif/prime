@@ -83,7 +83,7 @@ export function DoctorProfile({ doctor, locale, path, tone, intro, narrative, re
         </div>
 
         {links.length > 0 && (
-          <div className="container-prime section-y !pb-0">
+          <div className="container-prime pt-section">
             <h2 className="text-label mb-stack text-accent">{d.common.relatedServices}</h2>
             <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" role="list">
               {links.map((r, i) => (
@@ -96,7 +96,7 @@ export function DoctorProfile({ doctor, locale, path, tone, intro, narrative, re
         )}
 
         {doctor.faqs.length > 0 && (
-          <div className="container-prime grid-prime section-y !pb-0 gap-y-8">
+          <div className="container-prime grid-prime gap-y-8 pt-section">
             <h2 className="font-display text-display-sm col-span-4 text-theme md:col-span-6 lg:col-span-4">{d.common.faqs}</h2>
             <div className="col-span-4 md:col-span-6 lg:col-span-7 lg:col-start-6">
               <Accordion items={doctor.faqs.map((f, i) => ({ id: `doc-faq-${i}`, q: t(f.q, locale), a: t(f.a, locale) }))} />

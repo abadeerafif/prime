@@ -34,7 +34,7 @@ export default async function SpecialtiesPage({ params }: PageProps<"/[locale]/s
   ] as const;
 
   return (
-    <main>
+    <main id="main">
       <JsonLd data={breadcrumbSchema(locale, PATH)} />
       <PageHero
         locale={locale}

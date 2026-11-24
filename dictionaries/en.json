@@ -89,7 +89,8 @@
     "imageAlt": "Placeholder for Prime photography",
     "portraitAlt": "Portrait placeholder for",
     "notFoundTitle": "This page could not be found.",
-    "notFoundCta": "Return home"
+    "notFoundCta": "Return home",
+    "skipToContent": "Skip to content"
   },
   "home": {
     "philosophyLabel": "01 — Our approach",
@@ -130,6 +131,8 @@
     "successWhatsapp": "Your request is ready in WhatsApp. Send it there and our team will reply to arrange your consultation.",
     "successEmail": "Your request has been drafted in your email app. Send it and our team will reply to arrange your consultation.",
     "unavailable": "Online requests open soon. Visit us at the clinic in the meantime:",
+    "openAgain": "Didn't open? Open the message again",
+    "edit": "Edit request",
     "messageTitle": "Consultation request — Prime Aesthetic Clinics",
     "messageTitleHair": "Hair transplant assessment request — Prime Hair Transplant",
     "errors": {

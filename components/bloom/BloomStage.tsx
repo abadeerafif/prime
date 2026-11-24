@@ -83,6 +83,16 @@ export function BloomStage() {
         },
       ];
 
+      // The bloom has dissolved once the journey section is fully in; stop turning it.
+      if (sections.journey) {
+        ScrollTrigger.create({
+          trigger: sections.journey,
+          start: "top 20%",
+          onEnter: () => spin.pause(),
+          onLeaveBack: () => spin.play(),
+        });
+      }
+
       keyframes.slice(1).forEach((kf, i) => {
         const prev = keyframes[i].el;
         if (!kf.el || !prev) return;

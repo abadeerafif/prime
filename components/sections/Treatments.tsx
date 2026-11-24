@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { isTouchDevice, prefersReducedMotion } from "@/lib/motion";
 import { useLocale } from "@/components/Providers";
@@ -28,17 +27,12 @@ export function Treatments({ label, title, intro, more, items }: Props) {
   const preview = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [expanded, setExpanded] = useState<number | null>(null);
-  const [desktop, setDesktop] = useState(false);
   const [hoverable, setHoverable] = useState(true);
   const { sign } = useLocale();
-  const router = useRouter();
 
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 64rem)");
-    const apply = () => {
-      setDesktop(mq.matches);
-      setHoverable(!isTouchDevice());
-    };
+    const mq = window.matchMedia("(hover: none), (pointer: coarse)");
+    const apply = () => setHoverable(!isTouchDevice());
     apply();
     mq.addEventListener("change", apply);
     return () => mq.removeEventListener("change", apply);
@@ -68,6 +62,10 @@ export function Treatments({ label, title, intro, more, items }: Props) {
     () => {
       const panels = preview.current?.querySelectorAll<HTMLElement>("[data-panel]");
       if (!panels) return;
+      if (prefersReducedMotion()) {
+        panels.forEach((panel, i) => gsap.set(panel, { zIndex: i === active ? 2 : 1, clipPath: "inset(0 0 0% 0)", scale: 1 }));
+        return;
+      }
       panels.forEach((panel, i) => {
         if (i === active) {
           gsap.set(panel, { zIndex: 2 });
@@ -83,15 +81,6 @@ export function Treatments({ label, title, intro, more, items }: Props) {
     },
     { dependencies: [active] },
   );
-
-  const onRowClick = (e: MouseEvent<HTMLButtonElement>, i: number) => {
-    if (desktop) {
-      e.preventDefault();
-      router.push(items[i].href);
-      return;
-    }
-    setExpanded(expanded === i ? null : i);
-  };
 
   return (
     <section id="treatments" data-theme-section="ivory" className="section-y relative">
@@ -118,14 +107,12 @@ export function Treatments({ label, title, intro, more, items }: Props) {
               return (
                 <li key={item.id} data-row className="invisible relative">
                   <span data-row-line className="hairline block w-full origin-left rtl:origin-right" />
-                  <button
-                    type="button"
+                  {/* Desktop: the row is a link to the hub */}
+                  <Link
+                    href={item.href}
                     onPointerEnter={() => setActive(i)}
                     onFocus={() => setActive(i)}
-                    onClick={(e) => onRowClick(e, i)}
-                    aria-expanded={desktop ? undefined : isOpen}
-                    aria-controls={desktop ? undefined : `specialty-${item.id}`}
-                    className="group flex min-h-16 w-full items-center gap-5 py-5 text-start lg:gap-8 lg:py-6"
+                    className="group hidden min-h-16 w-full items-center gap-8 py-6 text-start lg:flex"
                     style={{
                       transform: `translateX(${isActive ? sign * 10 : 0}px)`,
                       transition: "transform .6s var(--ease-prime)",
@@ -136,16 +123,29 @@ export function Treatments({ label, title, intro, more, items }: Props) {
                       {item.name}
                     </span>
                     <span
-                      className="text-label hidden text-theme-muted transition-transform duration-500 lg:block"
+                      className="text-label text-theme-muted transition-transform duration-500"
                       style={{ transform: `translateX(${isActive ? 0 : sign * -12}px)`, opacity: isActive ? 1 : 0 }}
                       aria-hidden
                     >
                       {more} <span className="inline-block rtl:-scale-x-100">→</span>
                     </span>
-                    <PlusMinus open={isOpen} className="ms-auto h-5 w-5 lg:hidden" />
+                  </Link>
+
+                  {/* Below lg: the row toggles an accordion */}
+                  <button
+                    type="button"
+                    onClick={() => setExpanded(isOpen ? null : i)}
+                    aria-expanded={isOpen}
+                    aria-controls={`specialty-${item.id}`}
+                    className="flex min-h-16 w-full items-center gap-5 py-5 text-start lg:hidden"
+                  >
+                    <span className="text-label w-8 shrink-0 tabular-nums text-accent">{String(i + 1).padStart(2, "0")}</span>
+                    <span className={`font-display text-display-sm flex-1 transition-colors ${isOpen ? "text-accent" : "text-theme"}`}>
+                      {item.name}
+                    </span>
+                    <PlusMinus open={isOpen} className="ms-auto h-5 w-5" />
                   </button>
 
-                  {/* Accordion body below lg */}
                   <div
                     id={`specialty-${item.id}`}
                     className="grid lg:hidden"
@@ -153,6 +153,7 @@ export function Treatments({ label, title, intro, more, items }: Props) {
                       gridTemplateRows: isOpen ? "1fr" : "0fr",
                       transition: "grid-template-rows .8s var(--ease-prime-in-out)",
                     }}
+                    inert={!isOpen}
                   >
                     <div className="overflow-hidden">
                       {/* Indent = number column (w-8) + row gap (gap-5) */}

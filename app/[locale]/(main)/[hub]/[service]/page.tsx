@@ -31,7 +31,7 @@ export default async function ServicePage({ params }: PageProps<"/[locale]/[hub]
   const faqs = blockFaqs(page.blocks);
 
   return (
-    <main>
+    <main id="main">
       <JsonLd
         data={[
           procedureSchema(page, locale, path),

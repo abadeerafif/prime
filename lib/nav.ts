@@ -36,7 +36,7 @@ export function mainNavConfig(locale: Locale): NavConfig {
       { label: d.nav.guide, href: href(locale, "/blog") },
       { label: d.nav.contact, href: href(locale, "/contact") },
     ].filter(visible),
-    cta: { label: d.nav.cta, short: d.nav.ctaShort, href: href(locale, "/book") },
+    cta: { label: d.nav.cta, href: href(locale, "/book") },
     labels: {
       menu: d.nav.menu,
       close: d.nav.close,
@@ -84,7 +84,7 @@ export function hairNavConfig(locale: Locale): NavConfig {
       link(h.cost, "cost"),
       link(h.faqs, "faq"),
     ].filter(visible),
-    cta: { label: h.cta, short: h.ctaShort, href: href(locale, `${HAIR}/book`) },
+    cta: { label: h.cta, href: href(locale, `${HAIR}/book`) },
     back: { label: h.back, href: href(locale, "") },
     labels: {
       menu: d.nav.menu,

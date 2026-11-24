@@ -5,6 +5,7 @@ import { dictFor } from "@/dictionaries";
 import { Reveal } from "@/components/motion/Reveal";
 import { Accordion } from "@/components/ui/Accordion";
 import { RichText } from "@/components/ui/RichText";
+import { NumberedList } from "@/components/ui/NumberedList";
 import { CheckIcon, DashIcon } from "@/components/ui/Icons";
 import { GrowthTimeline } from "@/components/hair/GrowthTimeline";
 import { CandidacyQuiz } from "@/components/hair/CandidacyQuiz";
@@ -93,27 +94,17 @@ function renderBlock(block: Block, locale: Locale, dict: ReturnType<typeof dictF
         </>
       );
 
-    case "steps": {
-      const horizontal = block.items.length <= 6;
+    case "steps":
       return (
         <>
           <H2>{t(block.title, locale)}</H2>
-          <ol className={`grid gap-x-8 gap-y-10 ${horizontal ? "sm:grid-cols-2 lg:grid-cols-3" : ""}`} role="list">
-            {block.items.map((item, i) => (
-              <li key={i} className={`relative border-t border-theme pt-6 ${horizontal ? "" : "flex gap-6"}`}>
-                <span className="font-display-latin block w-12 shrink-0 text-[2.5rem] leading-none text-accent">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <div className={horizontal ? "mt-4" : ""}>
-                  {item.title && <h3 className="font-display text-title mb-2 text-theme">{t(item.title, locale)}</h3>}
-                  <p className="text-body text-theme-muted first-letter:uppercase">{t(item.body, locale)}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
+          <NumberedList
+            layout={block.items.length <= 6 ? "grid" : "stack"}
+            titleAs="h3"
+            items={block.items.map((item) => ({ title: item.title && t(item.title, locale), body: t(item.body, locale) }))}
+          />
         </>
       );
-    }
 
     case "table":
       return (

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isLocale } from "@/lib/i18n";
-import { mapsLink, site } from "@/lib/site";
+import { site } from "@/lib/site";
 import { metaFor } from "@/lib/seo";
 import { clinicSchema, faqSchema, physicianSchema } from "@/lib/schema";
 import { hairHome } from "@/content/hair/home";
@@ -14,7 +14,9 @@ import { DoctorCard } from "@/components/ui/DoctorCard";
 import { Accordion } from "@/components/ui/Accordion";
 import { RelatedLinks } from "@/components/ui/RelatedLinks";
 import { LinkCard } from "@/components/ui/LinkCard";
-import { ArrowIcon, CheckIcon, PinIcon } from "@/components/ui/Icons";
+import { ArrowIcon, CheckIcon } from "@/components/ui/Icons";
+import { NumberedList } from "@/components/ui/NumberedList";
+import { AddressBlock } from "@/components/ui/AddressBlock";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { ConsultationForm } from "@/components/forms/ConsultationForm";
 import { SplitReveal } from "@/components/motion/SplitReveal";
@@ -53,7 +55,7 @@ export default async function HairHomePage({ params }: PageProps<"/[locale]/hair
   const link = (path: string) => (isPathVisible(path) ? href(locale, path) : null);
 
   return (
-    <main>
+    <main id="main">
       <JsonLd data={[clinicSchema(locale, { hair: true }), physicianSchema(abdeen, locale), faqSchema(faqs, locale)]} />
 
       <PageHero
@@ -75,7 +77,7 @@ export default async function HairHomePage({ params }: PageProps<"/[locale]/hair
       </PageHero>
 
       {/* Introduction */}
-      <section data-theme-section="ivory" className="section-y relative z-10 !pt-0">
+      <section data-theme-section="ivory" className="relative z-10 pb-section">
         <div className="container-prime grid-prime gap-y-stack border-t border-theme pt-head">
             <SplitReveal as="h2" className="font-display text-display-sm col-span-4 text-balance text-theme md:col-span-6 lg:col-span-4" mode="lines">
               {L(H.intro.title)}
@@ -87,7 +89,7 @@ export default async function HairHomePage({ params }: PageProps<"/[locale]/hair
       </section>
 
       {/* Common concerns */}
-      <section data-theme-section="ivory" className="section-y relative z-10 !pt-0">
+      <section data-theme-section="ivory" className="relative z-10 pb-section">
         <div className="container-prime">
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5" role="list">
             {H.concerns.map((c, i) => (
@@ -114,17 +116,7 @@ export default async function HairHomePage({ params }: PageProps<"/[locale]/hair
             <Reveal as="h3" className="text-label mb-stack text-accent">
               {L(H.options.title)}
             </Reveal>
-            <ol className="space-y-0" role="list">
-              {H.options.items.map((o, i) => (
-                <Reveal as="li" key={i} delay={i * 0.08} y={20} className="grid grid-cols-[3rem_1fr] gap-4 border-t border-[var(--line)] py-6">
-                  <span className="font-display-latin text-2xl leading-none text-accent">{String(i + 1).padStart(2, "0")}</span>
-                  <div>
-                    <p className="font-display text-title text-ivory-light">{L(o.title)}</p>
-                    <p className="text-body mt-2 text-theme-muted">{L(o.body)}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </ol>
+            <NumberedList reveal items={H.options.items.map((o) => ({ title: L(o.title), body: L(o.body) }))} />
           </div>
         </div>
       </section>
@@ -146,29 +138,23 @@ export default async function HairHomePage({ params }: PageProps<"/[locale]/hair
       </section>
 
       {/* How we assess */}
-      <section data-theme-section="ivory" className="section-y relative z-10 !pt-0">
+      <section data-theme-section="ivory" className="relative z-10 pb-section">
         <div className="container-prime grid-prime gap-y-10">
           <div className="col-span-4 md:col-span-6 lg:col-span-4">
             <SplitReveal as="h2" className="font-display text-display-md text-balance text-theme lg:sticky lg:top-anchor" mode="lines">
               {L(H.assessment.title)}
             </SplitReveal>
           </div>
-          <ol className="col-span-4 md:col-span-6 lg:col-span-7 lg:col-start-6" role="list">
-            {H.assessment.items.map((a, i) => (
-              <Reveal as="li" key={i} delay={i * 0.06} y={20} className="grid grid-cols-[3rem_1fr] gap-4 border-t border-theme py-6">
-                <span className="font-display-latin text-2xl leading-none text-accent">{String(i + 1).padStart(2, "0")}</span>
-                <div>
-                  <p className="font-display text-title text-theme">{L(a.title)}</p>
-                  <p className="text-body mt-2 text-theme-muted">{L(a.body)}</p>
-                </div>
-              </Reveal>
-            ))}
-          </ol>
+          <NumberedList
+            reveal
+            className="col-span-4 md:col-span-6 lg:col-span-7 lg:col-start-6"
+            items={H.assessment.items.map((a) => ({ title: L(a.title), body: L(a.body) }))}
+          />
         </div>
       </section>
 
       {/* Specialist */}
-      <section data-theme-section="ivory" className="section-y relative z-10 !pt-0">
+      <section data-theme-section="ivory" className="relative z-10 pb-section">
         <div className="container-prime">
           <SectionLabel className="mb-stack">{L(H.specialist.title)}</SectionLabel>
           <Reveal>
@@ -186,7 +172,7 @@ export default async function HairHomePage({ params }: PageProps<"/[locale]/hair
       </section>
 
       {/* Journey */}
-      <section data-theme-section="ivory" className="section-y relative z-10 !pt-0">
+      <section data-theme-section="ivory" className="relative z-10 pb-section">
         <div className="container-prime">
           <Heading title={L(H.journey.title)} />
           <ol className="relative grid gap-y-10 lg:grid-cols-6 lg:gap-x-6" role="list">
@@ -213,7 +199,7 @@ export default async function HairHomePage({ params }: PageProps<"/[locale]/hair
       </section>
 
       {/* Expectations */}
-      <section data-theme-section="ivory" className="section-y relative z-10 !pt-0">
+      <section data-theme-section="ivory" className="relative z-10 pb-section">
         <div className="container-prime grid-prime gap-y-8">
           <div className="card-prime col-span-4 rounded-card-lg p-card-lg md:col-span-6 lg:col-span-10 lg:col-start-2">
             <SplitReveal as="h2" className="font-display text-display-sm text-balance text-theme" mode="lines">
@@ -240,7 +226,7 @@ export default async function HairHomePage({ params }: PageProps<"/[locale]/hair
       </section>
 
       {/* FAQ preview */}
-      <section data-theme-section="ivory" className="section-y relative z-10 !pt-0">
+      <section data-theme-section="ivory" className="relative z-10 pb-section">
         <div className="container-prime grid-prime gap-y-10">
           <div className="col-span-4 md:col-span-6 lg:col-span-4">
             <SplitReveal as="h2" className="font-display text-display-md text-balance text-theme" mode="lines">
@@ -259,7 +245,7 @@ export default async function HairHomePage({ params }: PageProps<"/[locale]/hair
       </section>
 
       {/* Why Prime */}
-      <section data-theme-section="ivory" className="section-y relative z-10 !pt-0">
+      <section data-theme-section="ivory" className="relative z-10 pb-section">
         <div className="container-prime">
           <Heading title={L(H.whyPrime.title)} />
           <ul className="grid gap-px overflow-hidden rounded-card border border-theme bg-[var(--line)] sm:grid-cols-2 lg:grid-cols-3" role="list">
@@ -285,14 +271,8 @@ export default async function HairHomePage({ params }: PageProps<"/[locale]/hair
             <Reveal as="p" className="text-body-lg mt-stack max-w-[44ch] text-theme-muted" delay={0.1}>
               {L(H.form.text)}
             </Reveal>
-            <Reveal className="mt-stack-lg flex items-start gap-3 text-theme-muted" delay={0.2}>
-              <PinIcon className="mt-1 h-5 w-5 shrink-0 text-gold-light" />
-              <div>
-                <p className="text-body">{site.address[locale]}</p>
-                <a href={mapsLink} target="_blank" rel="noreferrer" className="link-line text-label mt-2 inline-block text-ivory">
-                  {d.common.openMap}
-                </a>
-              </div>
+            <Reveal className="mt-stack-lg" delay={0.2}>
+              <AddressBlock address={site.address[locale]} mapLabel={d.common.openMap} />
             </Reveal>
           </div>
           <Reveal className="col-span-4 md:col-span-6 lg:col-span-6 lg:col-start-7" delay={0.1}>
@@ -301,11 +281,8 @@ export default async function HairHomePage({ params }: PageProps<"/[locale]/hair
         </div>
       </section>
 
-      <div data-theme-section="ivory" className="section-y relative z-10 !pt-0">
+      <div data-theme-section="ivory" className="relative z-10 pb-section">
         <RelatedLinks locale={locale} paths={H.related} title={d.common.related} />
-        <div className="container-prime mt-head">
-          <p className="measure border-t border-theme pt-6 text-sm text-theme-muted">{L(H.disclaimer)}</p>
-        </div>
       </div>
     </main>
   );

@@ -3,7 +3,7 @@ import Link from "next/link";
 /** Shown for unknown and unpublished routes. Bilingual because the locale is not known here. */
 export default function NotFound() {
   return (
-    <div data-surface="light" className="flex min-h-screen flex-col items-center justify-center gap-6 bg-ivory px-6 text-center text-charcoal">
+    <main id="main" data-surface="light" className="flex min-h-screen flex-col items-center justify-center gap-6 bg-ivory px-6 text-center text-charcoal">
       <p className="text-label text-accent">404</p>
       <h1 className="font-display text-display-md" lang="ar" dir="rtl">
         لم نعثر على هذه الصفحة.
@@ -19,6 +19,6 @@ export default function NotFound() {
           Return home
         </Link>
       </div>
-    </div>
+    </main>
   );
 }

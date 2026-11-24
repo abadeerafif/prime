@@ -16,10 +16,12 @@ export function Accordion({ items, className, level = 3 }: { items: Item[]; clas
       {items.map((item) => {
         const isOpen = open === item.id;
         const panelId = `${base}-${item.id}`;
+        const buttonId = `${panelId}-q`;
         return (
           <li key={item.id} className="border-b border-theme">
             <Heading>
               <button
+                id={buttonId}
                 type="button"
                 className="group flex w-full items-center gap-6 py-6 text-start"
                 aria-expanded={isOpen}
@@ -41,6 +43,7 @@ export function Accordion({ items, className, level = 3 }: { items: Item[]; clas
             <div
               id={panelId}
               role="region"
+              aria-labelledby={buttonId}
               className="grid"
               style={{
                 gridTemplateRows: isOpen ? "1fr" : "0fr",

@@ -14,22 +14,31 @@ export const avenir = localFont({
   src: [
     { path: "../public/fonts/avenir-book.woff2", weight: "400", style: "normal" },
     { path: "../public/fonts/avenir-medium.woff2", weight: "500", style: "normal" },
-    { path: "../public/fonts/avenir-heavy.woff2", weight: "700", style: "normal" },
   ],
 });
 
-/** Arabic display face. The supplied collection has a single Regular weight. */
-export const alTarikh = localFont({
-  variable: "--font-tarikh",
+/**
+ * Avenir Heavy joins the same "avenir" family, but only Arabic bold text
+ * reaches it (for Latin words inside it), so it is not preloaded.
+ */
+export const avenirHeavy = localFont({
+  variable: "--font-avenir-heavy",
   display: "swap",
-  declarations: [{ prop: "font-family", value: "alTarikh" }],
-  src: [{ path: "../public/fonts/al-tarikh.woff2", weight: "400", style: "normal" }],
+  preload: false,
+  adjustFontFallback: false,
+  declarations: [{ prop: "font-family", value: "avenir" }],
+  src: [{ path: "../public/fonts/avenir-heavy.woff2", weight: "700", style: "normal" }],
 });
 
-/** Arabic text face: real 400 to 700 weights for body, labels and buttons. */
+/**
+ * Arabic text face: real 400 to 700 weights for body, labels and buttons.
+ * Not preloaded: English pages never use it, and on Arabic pages the
+ * render-blocking stylesheet starts the download at first layout.
+ */
 export const plexArabic = IBM_Plex_Sans_Arabic({
   variable: "--font-arabic-body",
   display: "swap",
+  preload: false,
   subsets: ["arabic"],
   weight: ["400", "500", "600", "700"],
 });
@@ -43,12 +52,12 @@ export const fraunces = Fraunces({
   display: "swap",
   subsets: ["latin"],
   weight: "variable",
-  axes: ["opsz", "SOFT"],
 });
 
-export const fontVariables = [
-  avenir.variable,
-  alTarikh.variable,
-  plexArabic.variable,
-  fraunces.variable,
-].join(" ");
+/**
+ * The Arabic display face (Al Tarikh) is declared in globals.css against a
+ * stable /fonts URL so the Arabic layout alone can preload it.
+ */
+export const AL_TARIKH_URL = "/fonts/al-tarikh.woff2";
+
+export const fontVariables = [avenir.variable, avenirHeavy.variable, plexArabic.variable, fraunces.variable].join(" ");

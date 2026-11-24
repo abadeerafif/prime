@@ -25,7 +25,7 @@ export default async function DoctorsPage({ params }: PageProps<"/[locale]/docto
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   return (
-    <main>
+    <main id="main">
       <JsonLd data={breadcrumbSchema(locale, PATH)} />
       <PageHero
         locale={locale}

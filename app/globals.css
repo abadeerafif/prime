@@ -187,6 +187,16 @@
   --btn-outline-fill-fg: #e6e3d6;
 }
 
+/* Arabic display face. Declared here rather than through next/font so the
+   Arabic layout can preload this exact URL (see lib/fonts.ts). */
+@font-face {
+  font-family: "alTarikh";
+  src: url("/fonts/al-tarikh.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Latin brand type kept as-is inside Arabic pages (wordmarks, logos). */
 :root {
   --font-display-latin: var(--font-aquavit, "aquavit"), var(--font-fraunces),
@@ -316,6 +326,33 @@ blockquote {
   border-radius: 999px;
 }
 
+.skip-link {
+  position: fixed;
+  inset-inline-start: 1rem;
+  top: 1rem;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
+  background: var(--color-charcoal-deep);
+  color: var(--color-ivory-light);
+  font-size: var(--text-label);
+  translate: 0 -200%;
+  transition: translate 0.3s var(--ease-prime);
+}
+
+.skip-link:focus-visible {
+  translate: none;
+  outline-color: var(--color-gold-light);
+}
+
+/* Firefox has no ::-webkit-scrollbar; match the themed thumb and track there
+   only, since Chromium drops its WebKit scrollbar styles once this is set. */
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-color: color-mix(in srgb, var(--fg) 35%, transparent) var(--bg);
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* Typography utilities                                                */
 /* ------------------------------------------------------------------ */
@@ -367,6 +404,18 @@ blockquote {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   font-weight: 500;
+}
+/* Grows the hit area of small text links to 44px without moving the layout. */
+@utility tap-target {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    inset-inline: -0.25rem;
+    top: 50%;
+    height: 2.75rem;
+    translate: 0 -50%;
+  }
 }
 @utility measure {
   max-width: var(--measure);
@@ -460,9 +509,15 @@ blockquote {
   opacity: 0;
 }
 
-html.no-js [data-reveal],
 html.reduced-motion [data-reveal] {
   opacity: 1;
+}
+
+/* Above-the-fold entrance that needs no JavaScript, so inner-page headlines
+   paint with the HTML. "backwards" fill only holds the start state during the
+   delay; once finished it leaves transforms to GSAP (the header hides on scroll). */
+.enter {
+  animation: stage-in 0.9s var(--ease-prime) var(--enter-delay, 0s) backwards;
 }
 
 .split-mask .line {
@@ -493,8 +548,9 @@ body:has([data-hide-actionbar]) .action-bar {
   display: none;
 }
 
-.will-change-transform {
-  will-change: transform;
+/* It also steps aside while typing, so it never sits on the on-screen keyboard. */
+body:has(:is(input:not([type="checkbox"]), select, textarea):focus) .action-bar {
+  display: none;
 }
 
 /* Placeholder "photography" frames in brand tones */
@@ -549,7 +605,8 @@ body:has([data-hide-actionbar]) .action-bar {
   letter-spacing: 0.16em;
   text-transform: uppercase;
   font-weight: 500;
-  white-space: nowrap;
+  text-align: center;
+  max-width: 100%;
   overflow: hidden;
   isolation: isolate;
   transition:
@@ -614,6 +671,10 @@ body:has([data-hide-actionbar]) .action-bar {
   .btn-prime.is-solid:active {
     background: var(--btn-solid-hover);
   }
+}
+
+.btn-prime.btn-compact {
+  white-space: nowrap;
 }
 
 /* Compact header button below lg */
@@ -696,6 +757,18 @@ body:has([data-hide-actionbar]) .action-bar {
   transform: scaleX(0);
   transform-origin: right;
   transition: transform 0.5s var(--ease-prime);
+}
+
+/* On touch screens, text links get a 44px hit area (see the tap-target utility). */
+@media (pointer: coarse) {
+  .link-line::before {
+    content: "";
+    position: absolute;
+    inset-inline: -0.25rem;
+    top: 50%;
+    height: 2.75rem;
+    translate: 0 -50%;
+  }
 }
 
 :root[dir="rtl"] .link-line::after {

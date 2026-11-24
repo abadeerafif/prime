@@ -29,7 +29,7 @@ export default async function BlogPage({ params }: PageProps<"/[locale]/blog">) 
   const list = articles.filter((a) => isPathVisible(`${HAIR}/articles/${a.slug}`));
 
   return (
-    <main>
+    <main id="main">
       <JsonLd data={breadcrumbSchema(locale, PATH)} />
       <PageHero locale={locale} path={PATH} h1={t(corporate.blog.h1, locale)} intro={t(corporate.blog.intro, locale)} tone="dark" />
       {list.length > 0 && (
@@ -43,6 +43,7 @@ export default async function BlogPage({ params }: PageProps<"/[locale]/blog">) 
                   <ArticleCard
                     card={{ href: href(locale, `${HAIR}/articles/${a.slug}`), title: t(a.h1, locale), excerpt, tag: d.nav.hair }}
                     readLabel={d.common.readArticle}
+                    level={2}
                   />
                 </Reveal>
               );

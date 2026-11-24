@@ -1,7 +1,8 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isLocale } from "@/lib/i18n";
-import { hoursFor, mapsLink, site, whatsappUrl } from "@/lib/site";
+import { hoursFor, site, whatsappUrl } from "@/lib/site";
 import { metaFor } from "@/lib/seo";
 import { breadcrumbSchema } from "@/lib/schema";
 import { hairBook } from "@/content/hair/book";
@@ -9,9 +10,10 @@ import { HAIR, href, isPathVisible } from "@/content/registry";
 import { t, type Bi } from "@/content/types";
 import { dictFor } from "@/dictionaries";
 import { ConsultationForm } from "@/components/forms/ConsultationForm";
-import { CheckIcon, PinIcon, WhatsAppIcon } from "@/components/ui/Icons";
+import { CheckIcon, WhatsAppIcon } from "@/components/ui/Icons";
+import { NumberedList } from "@/components/ui/NumberedList";
+import { AddressBlock } from "@/components/ui/AddressBlock";
 import { MagneticButton } from "@/components/motion/MagneticButton";
-import { SplitReveal } from "@/components/motion/SplitReveal";
 import { Reveal } from "@/components/motion/Reveal";
 import { JsonLd } from "@/components/seo/JsonLd";
 
@@ -52,17 +54,15 @@ export default async function HairBookPage({ params }: PageProps<"/[locale]/hair
   );
 
   return (
-    <main data-hide-actionbar>
+    <main id="main" data-hide-actionbar>
       <JsonLd data={breadcrumbSchema(locale, PATH)} />
       <section data-theme-section="ivory" className="relative z-10 pb-section pt-header">
         <div className="container-prime grid-prime gap-y-12">
           <div className="col-span-4 md:col-span-6 lg:col-span-5">
-            <SplitReveal as="h1" className="font-display text-display-lg text-balance text-theme" mode="lines">
-              {L(B.h1)}
-            </SplitReveal>
-            <Reveal as="p" className="text-body-lg mt-stack max-w-[48ch] text-theme-muted" delay={0.15}>
+            <h1 className="enter font-display text-display-lg text-balance text-theme">{L(B.h1)}</h1>
+            <p className="enter text-body-lg mt-stack max-w-[48ch] text-theme-muted" style={{ "--enter-delay": "0.15s" } as CSSProperties}>
               {L(B.sub)}
-            </Reveal>
+            </p>
 
             <Reveal className="mt-head" delay={0.2}>
               <h2 className="text-label mb-stack-sm text-accent">{L(B.benefitsTitle)}</h2>
@@ -99,25 +99,11 @@ export default async function HairBookPage({ params }: PageProps<"/[locale]/hair
 
         <div className="container-prime mt-section">
           <h2 className="text-label mb-stack text-accent">{L(B.howTitle)}</h2>
-          <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4" role="list">
-            {B.howItWorks.map((s, i) => (
-              <Reveal as="li" key={i} delay={i * 0.08} y={20} className="border-t border-theme pt-5">
-                <span className="font-display-latin text-3xl leading-none text-accent">{String(i + 1).padStart(2, "0")}</span>
-                <p className="text-body-lg mt-4 text-theme">{L(s)}</p>
-              </Reveal>
-            ))}
-          </ol>
+          <NumberedList reveal layout="grid" columns={4} items={B.howItWorks.map((s) => ({ body: L(s) }))} />
 
-          <div className="mt-head flex flex-wrap items-start gap-3 text-theme-muted">
-            <PinIcon className="mt-1 h-5 w-5 shrink-0 text-accent" />
-            <div>
-              <p className="text-body">{site.address[locale]}</p>
-              {hours && <p className="text-body mt-1">{hours}</p>}
-              <a href={mapsLink} target="_blank" rel="noreferrer" className="link-line text-label mt-2 inline-block text-theme">
-                {d.common.openMap}
-              </a>
-            </div>
-          </div>
+          <AddressBlock className="mt-head" address={site.address[locale]} mapLabel={d.common.openMap}>
+            {hours && <p className="text-body mt-1">{hours}</p>}
+          </AddressBlock>
         </div>
       </section>
     </main>

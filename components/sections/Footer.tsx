@@ -1,26 +1,18 @@
 import Link from "next/link";
 import type { Locale } from "@/lib/i18n";
-import { hoursFor, mapsLink, site, whatsappUrl } from "@/lib/site";
+import { mapsLink, site } from "@/lib/site";
 import { HAIR, href, visibleLinks } from "@/content/registry";
 import { hubs } from "@/content/hubs";
 import { t } from "@/content/types";
 import { dictFor } from "@/dictionaries";
 import { Reveal } from "@/components/motion/Reveal";
+import { ContactRows } from "@/components/ui/ContactRows";
 import { BackToTop, FooterWordmark, Year } from "@/components/sections/FooterMotion";
 
 type Props = { locale: Locale; variant?: "main" | "hair" };
 
 export function Footer({ locale, variant = "main" }: Props) {
   const d = dictFor(locale);
-  const hours = hoursFor(locale);
-  const wa = whatsappUrl();
-
-  const contactRows = [
-    hours ? { label: d.common.hours, value: hours } : null,
-    site.phone ? { label: d.common.phone, value: site.phone, href: `tel:${site.phone}` } : null,
-    wa ? { label: d.common.whatsappShort, value: `+${site.whatsapp}`, href: wa } : null,
-    site.email ? { label: d.common.email, value: site.email, href: `mailto:${site.email}` } : null,
-  ].filter((x): x is { label: string; value: string; href?: string } => x !== null);
 
   const social = [
     site.instagram ? { label: "Instagram", href: site.instagram } : null,
@@ -44,7 +36,15 @@ export function Footer({ locale, variant = "main" }: Props) {
         <div className="grid-prime gap-y-12">
           <Reveal className="col-span-4 md:col-span-6 lg:col-span-3" y={30}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand/logo-portrait-ivory.png" alt={t(site.name, locale)} className="h-auto w-28 lg:w-32" />
+            <img
+              src="/brand/logo-portrait-ivory-384.png"
+              alt={t(site.name, locale)}
+              width={384}
+              height={442}
+              loading="lazy"
+              decoding="async"
+              className="h-auto w-28 lg:w-32"
+            />
             <p className="font-display text-display-sm mt-stack max-w-[16ch] text-balance text-ivory-light">
               {variant === "hair" ? d.footer.hairTagline : d.footer.tagline}
             </p>
@@ -56,24 +56,7 @@ export function Footer({ locale, variant = "main" }: Props) {
             <a href={mapsLink} target="_blank" rel="noreferrer" className="link-line text-label mt-4 inline-block text-ivory">
               {d.common.openMap}
             </a>
-            {contactRows.length > 0 && (
-              <dl className="mt-stack space-y-3 text-body">
-                {contactRows.map((row) => (
-                  <div key={row.label}>
-                    <dt className="text-sm text-theme-muted">{row.label}</dt>
-                    <dd className="text-ivory-light" dir={row.href ? "ltr" : undefined}>
-                      {row.href ? (
-                        <a href={row.href} className="link-line">
-                          {row.value}
-                        </a>
-                      ) : (
-                        row.value
-                      )}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            )}
+            <ContactRows locale={locale} variant="compact" className="mt-stack" />
           </Reveal>
 
           <Reveal className="col-span-2 md:col-span-3 lg:col-span-3" delay={0.2} y={20}>

@@ -15,7 +15,6 @@ import { OnThisPage } from "@/components/ui/OnThisPage";
 import { DoctorCard } from "@/components/ui/DoctorCard";
 import { CtaBand } from "@/components/ui/CtaBand";
 import { RelatedLinks } from "@/components/ui/RelatedLinks";
-import { Disclaimer } from "@/components/ui/Disclaimer";
 import { LinkCard, firstSentence } from "@/components/ui/LinkCard";
 import { Reveal } from "@/components/motion/Reveal";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -46,7 +45,7 @@ export default async function HubPage({ params }: PageProps<"/[locale]/[hub]">) 
   const faqs = blockFaqs(blocks);
 
   return (
-    <main>
+    <main id="main">
       <JsonLd data={[breadcrumbSchema(locale, path), ...(faqs.length ? [faqSchema(faqs, locale)] : [])]} />
       <PageHero
         locale={locale}
@@ -97,12 +96,12 @@ export default async function HubPage({ params }: PageProps<"/[locale]/[hub]">) 
         </div>
 
         {blocks.length > 0 && (
-          <div className="container-prime grid-prime section-y !pb-0 gap-y-10">
+          <div className="container-prime grid-prime gap-y-10 pt-section">
             <aside className="col-span-4 md:col-span-6 lg:col-span-3">
               <OnThisPage items={toc} title={d.common.onThisPage} />
             </aside>
             <div className="col-span-4 md:col-span-6 lg:col-span-7 lg:col-start-5">
-              <div className="max-w-[46rem] space-y-16 lg:space-y-20">
+              <div className="max-w-[46rem] space-y-head">
                 <BlockRenderer blocks={blocks} locale={locale} />
               </div>
             </div>
@@ -110,9 +109,6 @@ export default async function HubPage({ params }: PageProps<"/[locale]/[hub]">) 
         )}
 
         <RelatedLinks locale={locale} paths={hub.related} title={d.common.related} />
-        <div className="container-prime mt-head">
-          <Disclaimer locale={locale} className="measure border-t border-theme pt-6" />
-        </div>
       </div>
 
       <CtaBand locale={locale} text={t(home.finalCta, locale)} />

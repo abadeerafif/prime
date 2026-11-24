@@ -36,7 +36,9 @@ export function Hero({ brand, lines, intro, cta, secondary, scroll, imageAlt }: 
       if (!section.current) return;
       const reduced = prefersReducedMotion();
 
-      if (introDone) {
+      if (introDone && reduced) {
+        gsap.set([...meta.current!.children, cue.current], { autoAlpha: 1 });
+      } else if (introDone) {
         // Supporting copy and buttons arrive after the headline lines.
         gsap.fromTo(
           meta.current!.children,

@@ -33,7 +33,7 @@ export function FooterWordmark() {
     <div ref={wordmark} className="container-prime mt-head flex items-end justify-between" aria-hidden>
       <div className="flex overflow-hidden font-display-latin text-[clamp(5rem,22vw,22rem)] leading-[0.8] text-ivory/90" dir="ltr">
         {"PRIME".split("").map((letter, i) => (
-          <span key={i} data-letter className="block will-change-transform">
+          <span key={i} data-letter className="block">
             {letter}
           </span>
         ))}

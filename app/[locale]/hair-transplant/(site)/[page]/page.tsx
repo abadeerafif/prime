@@ -40,7 +40,7 @@ export default async function HairSubPage({ params }: PageProps<"/[locale]/hair-
     const doctor = doctors.find((x) => x.id === "dr-mahmoud-abdeen")!;
     const narrative = page.blocks[0]?.type === "prose" ? t(page.blocks[0].body[0], locale) : undefined;
     return (
-      <main>
+      <main id="main">
         <JsonLd data={[physicianSchema(doctor, locale), ...schema]} />
         <DoctorProfile
           doctor={doctor}
@@ -57,7 +57,7 @@ export default async function HairSubPage({ params }: PageProps<"/[locale]/hair-
   }
 
   return (
-    <main>
+    <main id="main">
       <JsonLd data={schema} />
       <ContentPageView
         page={page}

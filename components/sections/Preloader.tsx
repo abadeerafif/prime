@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { gsap } from "@/lib/gsap";
+import { gsap } from "@/lib/gsap-draw";
 import { prefersReducedMotion } from "@/lib/motion";
 import { useIntro } from "@/components/Providers";
 import { useSmoothScroll } from "@/components/motion/SmoothScroll";
@@ -126,7 +126,7 @@ export function Preloader({ tagline }: { tagline: string }) {
   if (done || skip) return null;
 
   return (
-    <div ref={root} className="fixed inset-0 z-[80]" aria-hidden>
+    <div ref={root} className="fixed inset-0 z-[80]" aria-hidden data-preloader>
       <div ref={panel} className="absolute inset-0 bg-ivory" />
       <div
         ref={bloomWrap}

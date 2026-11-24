@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 type Question = { q: string; options: string[] };
@@ -27,25 +27,41 @@ export function CandidacyQuiz({ questions, result, dynamicRecent, dynamicPreviou
   const [answers, setAnswers] = useState<number[]>([]);
   const step = answers.length;
   const done = step === questions.length;
+  // Each new question (or the result) takes focus, so screen readers read it
+  // and keyboard users continue from the right place.
+  const focusTarget = useRef<HTMLElement>(null);
+  const interacted = useRef(false);
+
+  useEffect(() => {
+    if (!interacted.current) return;
+    focusTarget.current?.focus({ preventScroll: true });
+  }, [step, started]);
 
   const restart = () => {
     setAnswers([]);
     setStarted(false);
   };
 
+  const begin = () => {
+    interacted.current = true;
+    setStarted(true);
+  };
+
   return (
-    <div className="card-prime p-card-lg" aria-live="polite">
+    <div className="card-prime p-card-lg">
       {!started ? (
         <div className="flex flex-col items-start gap-6">
           <p className="text-body-lg max-w-[48ch] text-theme-muted">{labels.intro}</p>
-          <button type="button" className="btn-prime is-solid" onClick={() => setStarted(true)}>
+          <button ref={focusTarget as React.RefObject<HTMLButtonElement>} type="button" className="btn-prime is-solid" onClick={begin}>
             {labels.start}
           </button>
           <p className="text-body text-theme-muted">{privacy}</p>
         </div>
       ) : done ? (
         <div className="flex flex-col items-start gap-6">
-          <p className="font-display text-display-sm text-theme">{result}</p>
+          <p ref={focusTarget as React.RefObject<HTMLParagraphElement>} tabIndex={-1} className="font-display text-display-sm text-theme focus:outline-none">
+            {result}
+          </p>
           {(answers[ONSET] === 0 || answers[SPED_UP] === 0) && (
             <p className="text-body-lg border-s-2 border-[var(--accent)] ps-5 text-theme-muted">{dynamicRecent}</p>
           )}
@@ -67,7 +83,7 @@ export function CandidacyQuiz({ questions, result, dynamicRecent, dynamicPreviou
             <p className="text-label text-accent">
               {labels.step} {step + 1} {labels.of} {questions.length}
             </p>
-            <span className="relative h-px flex-1 bg-[var(--line)]">
+            <span className="relative h-px flex-1 bg-[var(--line)]" aria-hidden>
               <span
                 className="absolute inset-y-0 start-0 bg-accent transition-[width] duration-500"
                 style={{ width: `${(step / questions.length) * 100}%` }}
@@ -75,7 +91,16 @@ export function CandidacyQuiz({ questions, result, dynamicRecent, dynamicPreviou
             </span>
           </div>
           <fieldset key={step} className="animate-[stage-in_.5s_var(--ease-prime)]">
-            <legend className="font-display text-display-sm mb-stack text-theme">{questions[step].q}</legend>
+            <legend
+              ref={focusTarget as React.RefObject<HTMLLegendElement>}
+              tabIndex={-1}
+              className="font-display text-display-sm mb-stack text-theme focus:outline-none"
+            >
+              <span className="sr-only">
+                {labels.step} {step + 1} {labels.of} {questions.length}:{" "}
+              </span>
+              {questions[step].q}
+            </legend>
             <div className="flex flex-wrap gap-3">
               {questions[step].options.map((opt, i) => (
                 <button

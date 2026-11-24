@@ -3,13 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { prefersReducedMotion } from "@/lib/motion";
-import { mapsLink, whatsappUrl } from "@/lib/site";
+import { whatsappUrl } from "@/lib/site";
 import { useLocale } from "@/components/Providers";
 import { SplitReveal } from "@/components/motion/SplitReveal";
 import { Reveal } from "@/components/motion/Reveal";
 import { BloomMark } from "@/components/bloom/BloomMark";
 import { ConsultationForm } from "@/components/forms/ConsultationForm";
-import { PinIcon, WhatsAppIcon } from "@/components/ui/Icons";
+import { WhatsAppIcon } from "@/components/ui/Icons";
+import { AddressBlock } from "@/components/ui/AddressBlock";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 
 type Props = {
@@ -103,15 +104,7 @@ export function Booking({ label, titleLines, intro, whatsappLabel, address, open
                   {whatsappLabel}
                 </a>
               )}
-              <div className="flex items-start gap-3 text-theme-muted">
-                <PinIcon className="mt-1 h-5 w-5 shrink-0 text-gold-light" />
-                <div>
-                  <p className="text-body max-w-[36ch]">{address}</p>
-                  <a href={mapsLink} target="_blank" rel="noreferrer" className="link-line text-label mt-2 inline-block text-ivory">
-                    {openMap}
-                  </a>
-                </div>
-              </div>
+              <AddressBlock address={address} mapLabel={openMap} />
             </Reveal>
           </div>
 

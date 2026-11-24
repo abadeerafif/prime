@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type MouseEvent } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { isTouchDevice } from "@/lib/motion";
+import { isTouchDevice, prefersReducedMotion } from "@/lib/motion";
 import { otherLocale } from "@/lib/i18n";
 import { useIntro, useLocale } from "@/components/Providers";
 import { useSmoothScroll } from "@/components/motion/SmoothScroll";
@@ -23,7 +23,7 @@ export type NavConfig = {
   logo: { alt: string; text?: string };
   homeHref: string;
   items: (NavLink | NavGroup)[];
-  cta: { label: string; short: string; href: string };
+  cta: { label: string; href: string };
   back?: NavLink;
   brandLine?: NavLink;
   labels: { menu: string; close: string; langToggle: string; langToggleAria: string; primary: string };
@@ -40,6 +40,7 @@ export function Navigation({ config }: { config: NavConfig }) {
   const [mobileGroup, setMobileGroup] = useState<number | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const holdRef = useRef(false);
+  const heldForIntro = useRef(false);
   const { introDone } = useIntro();
   const { locale } = useLocale();
   const { stop, start } = useSmoothScroll();
@@ -58,11 +59,19 @@ export function Navigation({ config }: { config: NavConfig }) {
     () => {
       const el = header.current;
       if (!el) return;
+      // Only the home preloader holds the header back; inner pages keep the
+      // CSS entrance it was server-rendered with.
       if (!introDone) {
-        gsap.set(el, { autoAlpha: 0, y: -16 });
+        if (document.querySelector("[data-preloader]")) {
+          heldForIntro.current = true;
+          gsap.set(el, { autoAlpha: 0, y: -16 });
+        }
         return;
       }
-      gsap.to(el, { autoAlpha: 1, y: 0, duration: 1, delay: 0.3 });
+      if (heldForIntro.current) {
+        heldForIntro.current = false;
+        gsap.to(el, { autoAlpha: 1, y: 0, duration: 1, delay: 0.3 });
+      }
 
       let hidden = false;
       const st = ScrollTrigger.create({
@@ -71,14 +80,24 @@ export function Navigation({ config }: { config: NavConfig }) {
         onUpdate: (self) => {
           const y = self.scroll();
           setScrolled(y > 40);
-          const shouldHide = !holdRef.current && self.direction === 1 && y > 120;
+          const shouldHide = !holdRef.current && !el.matches(":focus-within") && self.direction === 1 && y > 120;
           if (shouldHide !== hidden) {
             hidden = shouldHide;
             gsap.to(el, { yPercent: hidden ? -110 : 0, duration: 0.6, ease: "primeInOut", overwrite: "auto" });
           }
         },
       });
-      return () => st.kill();
+      // Keyboard focus arriving in a hidden header brings it back.
+      const onFocus = () => {
+        if (!hidden) return;
+        hidden = false;
+        gsap.to(el, { yPercent: 0, duration: 0.4, ease: "primeInOut", overwrite: "auto" });
+      };
+      el.addEventListener("focusin", onFocus);
+      return () => {
+        st.kill();
+        el.removeEventListener("focusin", onFocus);
+      };
     },
     { dependencies: [introDone] },
   );
@@ -90,6 +109,14 @@ export function Navigation({ config }: { config: NavConfig }) {
       if (!el) return;
       const links = el.querySelectorAll("[data-menu-link]");
       const meta = el.querySelectorAll("[data-menu-meta]");
+      if (prefersReducedMotion()) {
+        if (open) stop();
+        else start();
+        gsap.set(el, { clipPath: open ? "inset(0 0 0% 0)" : "inset(0 0 100% 0)", pointerEvents: open ? "auto" : "none" });
+        gsap.set(links, { yPercent: 0 });
+        gsap.set(meta, { autoAlpha: 1, y: 0 });
+        return;
+      }
       if (open) {
         stop();
         gsap
@@ -108,6 +135,13 @@ export function Navigation({ config }: { config: NavConfig }) {
     },
     { dependencies: [open] },
   );
+
+  // While the menu is open, the page behind it leaves the tab order and the accessibility tree.
+  useEffect(() => {
+    const behind = Array.from(document.querySelectorAll<HTMLElement>("main, footer, .action-bar"));
+    behind.forEach((node) => (node.inert = open));
+    return () => behind.forEach((node) => (node.inert = false));
+  }, [open]);
 
   // Focus into the menu when it opens, back to the toggle when it closes.
   const wasOpen = useRef(false);
@@ -169,9 +203,12 @@ export function Navigation({ config }: { config: NavConfig }) {
     });
   };
 
+  const langHref = pathname.replace(/^\/(ar|en)(?=\/|$)/, `/${otherLocale(locale)}`);
   const langLink = (
     <Link
-      href={`/${otherLocale(locale)}`}
+      href={langHref}
+      // Prefetching the other locale would pull in its font preloads too.
+      prefetch={false}
       onClick={switchLocale}
       className="link-line text-label text-theme"
       aria-label={config.labels.langToggleAria}
@@ -189,7 +226,7 @@ export function Navigation({ config }: { config: NavConfig }) {
     <>
       <header
         ref={header}
-        className={`site-header fixed inset-x-0 top-0 z-[75] invisible text-theme ${(scrolled || panel !== null) && !open ? "is-scrolled" : ""}`}
+        className={`site-header enter fixed inset-x-0 top-0 z-[75] text-theme ${(scrolled || panel !== null) && !open ? "is-scrolled" : ""}`}
         data-surface={open ? "light" : undefined}
         onPointerLeave={() => hover(null)}
       >
@@ -199,14 +236,14 @@ export function Navigation({ config }: { config: NavConfig }) {
               {config.variant === "main" ? (
                 <span className="relative block h-8 w-[112px] sm:h-9 sm:w-[140px] lg:h-10 lg:w-[160px]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/brand/logo-landscape-charcoal.png" alt="" className={`absolute inset-0 h-full w-full object-contain object-left rtl:object-right ${open ? "" : "theme-dark:hidden"}`} />
+                  <img src="/brand/logo-landscape-charcoal-480.png" alt="" width={480} height={141} className={`absolute inset-0 h-full w-full object-contain object-left rtl:object-right ${open ? "" : "theme-dark:hidden"}`} />
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/brand/logo-landscape-ivory.png" alt="" className={`absolute inset-0 hidden h-full w-full object-contain object-left rtl:object-right ${open ? "" : "theme-dark:block"}`} />
+                  <img src="/brand/logo-landscape-ivory-480.png" alt="" width={480} height={141} className={`absolute inset-0 hidden h-full w-full object-contain object-left rtl:object-right ${open ? "" : "theme-dark:block"}`} />
                 </span>
               ) : (
                 <span className="flex items-center gap-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/brand/logo-icon.png" alt="" className="h-8 w-auto lg:h-10" />
+                  <img src="/brand/logo-icon-168.png" alt="" width={168} height={121} className="h-8 w-auto lg:h-10" />
                   <span className="font-display-latin text-[0.95rem] uppercase leading-tight tracking-[0.18em] lg:text-[1.05rem]" dir="ltr">
                     {config.logo.text}
                   </span>
@@ -214,7 +251,7 @@ export function Navigation({ config }: { config: NavConfig }) {
               )}
             </Link>
             {config.brandLine && (
-              <Link href={config.brandLine.href} className="link-line mt-1 hidden self-start text-[0.7rem] text-theme-muted sm:inline-block">
+              <Link href={config.brandLine.href} className="link-line mt-1 hidden self-start text-xs text-theme-muted sm:inline-block">
                 {config.brandLine.label}
               </Link>
             )}
@@ -260,10 +297,12 @@ export function Navigation({ config }: { config: NavConfig }) {
 
           <div className="flex shrink-0 items-center gap-4 lg:gap-5">
             <span className="hidden sm:inline-flex">{langLink}</span>
-            <MagneticButton href={config.cta.href} className="btn-compact" onClick={closeAll}>
-              <span className="sm:hidden">{config.cta.short}</span>
-              <span className="hidden sm:inline">{config.cta.label}</span>
-            </MagneticButton>
+            {/* Below lg the sticky action bar carries the booking button. */}
+            <span className="hidden lg:inline-flex">
+              <MagneticButton href={config.cta.href} className="btn-compact" onClick={closeAll}>
+                {config.cta.label}
+              </MagneticButton>
+            </span>
             <button
               ref={toggle}
               type="button"

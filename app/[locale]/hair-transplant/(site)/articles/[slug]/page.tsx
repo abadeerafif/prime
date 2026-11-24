@@ -28,7 +28,7 @@ export default async function ArticlePage({ params }: PageProps<"/[locale]/hair-
   if (!isLocale(locale) || !article || !isPathVisible(path)) notFound();
   const d = dictFor(locale);
   return (
-    <main>
+    <main id="main">
       <JsonLd data={breadcrumbSchema(locale, path)} />
       <ContentPageView
         page={article}

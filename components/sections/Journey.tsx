@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { gsap } from "@/lib/gsap-draw";
 import { prefersReducedMotion } from "@/lib/motion";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { SplitReveal } from "@/components/motion/SplitReveal";

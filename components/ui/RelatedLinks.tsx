@@ -10,7 +10,7 @@ export function RelatedLinks({ locale, paths, title, max = 3 }: { locale: Locale
   const links = visibleLinks(paths).slice(0, max);
   if (!links.length) return null;
   return (
-    <section className="container-prime section-y !pb-0">
+    <section className="container-prime pt-section">
       <h2 className="text-label mb-stack text-accent">{title}</h2>
       <ul className="grid gap-4 md:grid-cols-3" role="list">
         {links.map((r, i) => (
