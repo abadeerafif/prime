@@ -16,7 +16,7 @@ export default async function FocusLayout({ children, params }: LayoutProps<"/[l
     <>
       <header className="absolute inset-x-0 top-0 z-[75] text-theme">
         <div className="container-prime flex items-center justify-between gap-6 py-5 lg:py-6">
-          <Link href={href(locale, HAIR)} className="flex items-center gap-3" aria-label={t(site.hairName, locale)}>
+          <Link href={href(locale, HAIR)} className="tap-target flex items-center gap-3" aria-label={t(site.hairName, locale)}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/brand/logo-icon-168.png" alt="" width={168} height={121} className="h-8 w-auto lg:h-10" />
             <span className="font-display-latin text-[0.95rem] uppercase leading-tight tracking-[0.18em] lg:text-[1.05rem]" dir="ltr">

@@ -90,7 +90,8 @@
     "portraitAlt": "Portrait placeholder for",
     "notFoundTitle": "This page could not be found.",
     "notFoundCta": "Return home",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "quickActions": "Quick actions"
   },
   "home": {
     "philosophyLabel": "01 — Our approach",

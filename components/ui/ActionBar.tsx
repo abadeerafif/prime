@@ -16,20 +16,24 @@ export function ActionBar({ locale, bookHref, bookLabel }: { locale: Locale; boo
 
   if (!wa && !site.phone) {
     return (
-      <div className="action-bar pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex justify-center px-[var(--gutter)] pb-[calc(1rem+env(safe-area-inset-bottom))] lg:hidden">
+      <nav
+        aria-label={dict.common.quickActions}
+        className="action-bar pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex justify-center px-[var(--gutter)] pb-[calc(1rem+env(safe-area-inset-bottom))] lg:hidden"
+      >
         <Link
           href={book}
           className="pointer-events-auto flex min-h-12 items-center justify-center rounded-full bg-gold-light px-7 text-sm font-medium text-charcoal-deep shadow-[0_12px_30px_-12px_rgba(53,51,46,0.55)] transition-colors active:bg-ivory-light"
         >
           {bookLabel}
         </Link>
-      </div>
+      </nav>
     );
   }
 
   const item = "flex min-h-14 flex-1 items-center justify-center gap-2 px-3 text-sm font-medium transition-colors active:bg-white/5";
   return (
-    <div
+    <nav
+      aria-label={dict.common.quickActions}
       data-surface="dark"
       className="action-bar fixed inset-x-0 bottom-0 z-[60] flex divide-x divide-[var(--line)] border-t border-[var(--line)] bg-charcoal-deep/95 pb-[env(safe-area-inset-bottom)] text-theme backdrop-blur rtl:divide-x-reverse lg:hidden"
     >
@@ -48,6 +52,6 @@ export function ActionBar({ locale, bookHref, bookLabel }: { locale: Locale; boo
       <Link href={book} className={`${item} bg-gold-light text-charcoal-deep active:bg-ivory-light`}>
         {bookLabel}
       </Link>
-    </div>
+    </nav>
   );
 }

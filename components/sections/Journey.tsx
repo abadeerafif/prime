@@ -111,8 +111,8 @@ export function Journey({ dict }: Props) {
             <li
               key={step.title}
               data-step
-              className="relative min-h-[32vh] ps-16 pb-head transition-opacity duration-700 lg:min-h-[40vh]"
-              style={{ opacity: active === i ? 1 : 0.6 }}
+              className="relative min-h-[32vh] ps-16 pb-head lg:min-h-[40vh]"
+              aria-current={active === i ? "step" : undefined}
             >
               <BloomMark
                 data-step-bloom

@@ -45,7 +45,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[lo
         {locale === "ar" ? <link rel="preload" href={AL_TARIKH_URL} as="font" type="font/woff2" crossOrigin="anonymous" /> : null}
         <noscript
           dangerouslySetInnerHTML={{
-            __html: "<style>[data-preloader]{display:none!important}[data-reveal]{opacity:1!important}.invisible{visibility:visible!important}</style>",
+            __html: "<style>[data-preloader]{display:none!important}[data-reveal]{opacity:1!important;translate:none!important}.invisible{visibility:visible!important}</style>",
           }}
         />
         {adobeKit ? (

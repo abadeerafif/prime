@@ -340,9 +340,9 @@ blockquote {
   transition: translate 0.3s var(--ease-prime);
 }
 
-.skip-link:focus-visible {
+.skip-link:focus {
   translate: none;
-  outline-color: var(--color-gold-light);
+  outline: 2px solid var(--color-gold-light);
 }
 
 /* Firefox has no ::-webkit-scrollbar; match the themed thumb and track there
@@ -505,19 +505,55 @@ blockquote {
 /* Motion helpers                                                      */
 /* ------------------------------------------------------------------ */
 
+/* Reveal: the element waits faded and lowered until Reveal.tsx marks it
+   .is-revealed; per-element distance, delay and duration come in as variables. */
 [data-reveal] {
   opacity: 0;
+  translate: 0 var(--reveal-y, 24px);
+  transition:
+    opacity var(--reveal-dur, 0.9s) var(--ease-prime) var(--reveal-delay, 0s),
+    translate var(--reveal-dur, 0.9s) var(--ease-prime) var(--reveal-delay, 0s);
+}
+
+[data-reveal].is-revealed {
+  opacity: 1;
+  translate: none;
 }
 
 html.reduced-motion [data-reveal] {
   opacity: 1;
+  translate: none;
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    translate: none;
+    transition: none;
+  }
 }
 
 /* Above-the-fold entrance that needs no JavaScript, so inner-page headlines
-   paint with the HTML. "backwards" fill only holds the start state during the
-   delay; once finished it leaves transforms to GSAP (the header hides on scroll). */
+   paint with the HTML. Transform only: Chrome does not count text at opacity 0
+   as painted, so a fade would push LCP back. "backwards" fill only holds the
+   start state during the delay; once finished it leaves transforms to GSAP
+   (the header hides on scroll). */
+@keyframes enter-rise {
+  from {
+    transform: translateY(var(--enter-from, 14px));
+  }
+  to {
+    transform: none;
+  }
+}
+
 .enter {
-  animation: stage-in 0.9s var(--ease-prime) var(--enter-delay, 0s) backwards;
+  animation: enter-rise 0.9s var(--ease-prime) var(--enter-delay, 0s) backwards;
+}
+
+.site-header.enter {
+  --enter-from: -14px;
 }
 
 .split-mask .line {

@@ -232,7 +232,7 @@ export function Navigation({ config }: { config: NavConfig }) {
       >
         <div className={`container-prime flex items-center justify-between gap-6 transition-[padding] duration-500 ${scrolled ? "py-3 lg:py-4" : "py-5 lg:py-6"}`}>
           <div className="flex min-w-0 flex-col">
-            <Link href={config.homeHref} onClick={closeAll} className="relative block" aria-label={config.logo.alt}>
+            <Link href={config.homeHref} onClick={closeAll} className="tap-target block" aria-label={config.logo.alt}>
               {config.variant === "main" ? (
                 <span className="relative block h-8 w-[112px] sm:h-9 sm:w-[140px] lg:h-10 lg:w-[160px]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}

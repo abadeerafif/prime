@@ -57,7 +57,9 @@ export function SplitReveal({
         linesClass: "line",
         wordsClass: "word",
         autoSplit: true,
-        aria: "auto",
+        // aria-label is not allowed on a plain <span> (used for headline lines),
+        // so spans keep their text readable as-is instead.
+        aria: Tag === "span" ? "none" : "auto",
         onSplit: (self) => {
           const targets = mode === "lines" ? self.lines : self.words;
           gsap.set(el, { autoAlpha: 1 });
@@ -83,7 +85,7 @@ export function SplitReveal({
 
       return () => split.revert();
     },
-    { dependencies: [ready, trigger, mode], revertOnUpdate: true },
+    { dependencies: [ready, trigger, mode, Tag], revertOnUpdate: true },
   );
 
   return (
