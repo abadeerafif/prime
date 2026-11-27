@@ -9,7 +9,8 @@ import { useSmoothScroll } from "@/components/motion/SmoothScroll";
 import { SplitReveal } from "@/components/motion/SplitReveal";
 import { ImageReveal } from "@/components/motion/ImageReveal";
 import { MagneticButton } from "@/components/motion/MagneticButton";
-import { PhotoFrame } from "@/components/ui/PhotoFrame";
+import { Photo } from "@/components/ui/PhotoFrame";
+import { photos } from "@/lib/images";
 import { WhatsAppIcon } from "@/components/ui/Icons";
 
 type Props = {
@@ -125,7 +126,13 @@ export function Hero({ brand, lines, intro, cta, secondary, scroll, imageAlt }: 
             ready={introDone}
             delay={0.5}
           >
-            <PhotoFrame className="h-full w-full mask-arch" tone="light" label={imageAlt} />
+            <Photo
+              photo={photos.hero}
+              alt={imageAlt}
+              sizes="(min-width: 1024px) 34vw, 50vw"
+              className="h-full w-full mask-arch"
+              preload
+            />
           </ImageReveal>
           <span className="pointer-events-none absolute -inset-3 -z-10 mask-arch border border-gold/40" aria-hidden />
         </div>

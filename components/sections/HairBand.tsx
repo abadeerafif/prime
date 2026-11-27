@@ -2,7 +2,8 @@ import { SplitReveal } from "@/components/motion/SplitReveal";
 import { Reveal } from "@/components/motion/Reveal";
 import { ImageReveal } from "@/components/motion/ImageReveal";
 import { MagneticButton } from "@/components/motion/MagneticButton";
-import { PhotoFrame } from "@/components/ui/PhotoFrame";
+import { Photo } from "@/components/ui/PhotoFrame";
+import { photos } from "@/lib/images";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 
 type Props = {
@@ -36,7 +37,12 @@ export function HairBand({ label, title, body, explore, candidate, imageAlt }: P
         </div>
         <div className="relative col-span-3 col-start-2 md:col-span-3 md:col-start-4 lg:col-span-4 lg:col-start-9">
           <ImageReveal className="mask-arch aspect-[3/4] w-full" innerClassName="mask-arch" parallax={6}>
-            <PhotoFrame className="h-full w-full mask-arch" tone="dark" label={imageAlt} />
+            <Photo
+              photo={photos.hairFeature}
+              alt={imageAlt}
+              sizes="(min-width: 1024px) 34vw, (min-width: 768px) 50vw, 75vw"
+              className="h-full w-full mask-arch"
+            />
           </ImageReveal>
           <span className="pointer-events-none absolute -inset-3 -z-0 mask-arch border border-gold-light/40" aria-hidden />
         </div>

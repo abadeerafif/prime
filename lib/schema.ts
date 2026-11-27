@@ -1,5 +1,5 @@
 import type { Locale } from "@/lib/i18n";
-import { site, hoursFor } from "@/lib/site";
+import { clinicGeo, hoursFor, mapsLink, site } from "@/lib/site";
 import { trail } from "@/content/registry";
 import { t, type Block, type ContentPage, type Doctor, type Faq } from "@/content/types";
 
@@ -19,8 +19,15 @@ export function clinicSchema(locale: Locale, opts: { hair?: boolean } = {}) {
     name: t(site.name, locale),
     url: abs(locale, ""),
     address: address(locale),
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: clinicGeo.lat,
+      longitude: clinicGeo.lng,
+    },
+    hasMap: mapsLink,
   };
-  if (site.phone) clinic.telephone = site.phone;
+  if (site.phones.length === 1) clinic.telephone = site.phones[0].dial;
+  else if (site.phones.length > 1) clinic.telephone = site.phones.map((p) => p.dial);
   const hours = hoursFor(locale);
   if (hours) clinic.openingHours = hours;
   if (opts.hair) {

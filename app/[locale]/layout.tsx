@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Pr
     metadataBase: new URL(site.url),
     openGraph: {
       siteName: site.name[locale],
-      images: [{ url: "/brand/logo-landscape-charcoal.png", width: 1154, height: 339 }],
+      images: [{ url: "/images/01-home-hero-1500x2000.webp", width: 1500, height: 2000 }],
     },
     icons: { icon: "/brand/logo-icon-168.png" },
   };

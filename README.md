@@ -16,7 +16,8 @@ Copy `.env.example` to `.env.local` and fill in:
 | Variable | Purpose |
 | --- | --- |
 | `NEXT_PUBLIC_ADOBE_KIT_ID` | Adobe Fonts kit containing Aquavit. Until set, the display face falls back to Fraunces. |
-| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Digits only, international format. Enquiry form and WhatsApp button use it; without it the form falls back to email. |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Digits only, international format (defaults to `201016895099`). Enquiry form and WhatsApp button use it. |
+| `NEXT_PUBLIC_PHONE` | Clinic phone numbers separated by `\|` or `,` (defaults to `+20 101 689 5099 \| +20 109 207 9155`). |
 | `NEXT_PUBLIC_SITE_URL` | Public URL for Open Graph metadata. |
 
 ## Structure
@@ -34,7 +35,7 @@ Copy `.env.example` to `.env.local` and fill in:
 
 ## Replacing placeholders
 
-- **Photography**: every image frame renders `components/ui/PhotoFrame.tsx`. Swap its contents for `next/image` once photography exists; reveal and parallax wrappers stay as they are.
+- **Photography**: supplied images live in `public/images/` and are mapped in `lib/images.ts`, rendered via `Photo` in `components/ui/PhotoFrame.tsx`.
 - **Copy and facts**: addresses, phone numbers and hours live in the dictionaries and are marked "to be confirmed".
 - **Arabic**: written for layout and tone; have a native speaker review before launch.
 - **Avenir**: the supplied `.ttc` is a desktop licence. Confirm a web licence before going live.

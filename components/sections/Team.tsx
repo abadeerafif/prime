@@ -5,8 +5,6 @@ import { SplitReveal } from "@/components/motion/SplitReveal";
 import { Reveal } from "@/components/motion/Reveal";
 import { DoctorCard } from "@/components/ui/DoctorCard";
 
-const TONES = ["light", "warm", "dark"] as const;
-
 export function Team({ locale, label, title, doctors }: { locale: Locale; label: string; title: string; doctors: Doctor[] }) {
   return (
     <section id="team" data-theme-section="ivory" className="section-y relative z-10">
@@ -15,10 +13,10 @@ export function Team({ locale, label, title, doctors }: { locale: Locale; label:
         <SplitReveal as="h2" className="font-display text-display-lg mb-head text-balance text-theme" mode="lines">
           {title}
         </SplitReveal>
-        <div className="grid gap-x-8 gap-y-head sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {doctors.map((d, i) => (
-            <Reveal key={d.id} delay={i * 0.1} y={32} className={i === 1 ? "lg:mt-head" : ""}>
-              <DoctorCard doctor={d} locale={locale} tone={TONES[i % TONES.length]} />
+            <Reveal key={d.id} delay={i * 0.1} y={32} className="h-full">
+              <DoctorCard doctor={d} locale={locale} index={i + 1} />
             </Reveal>
           ))}
         </div>

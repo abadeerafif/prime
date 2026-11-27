@@ -590,40 +590,6 @@ body:has(:is(input:not([type="checkbox"]), select, textarea):focus) .action-bar 
 }
 
 /* Placeholder "photography" frames in brand tones */
-.photo-placeholder {
-  position: relative;
-  background:
-    radial-gradient(120% 90% at 30% 20%, rgba(230, 227, 214, 0.55), transparent 60%),
-    radial-gradient(90% 90% at 80% 90%, rgba(155, 129, 40, 0.35), transparent 60%),
-    linear-gradient(160deg, #a9a393 0%, #96928a 45%, #7d776d 100%);
-  overflow: hidden;
-  isolation: isolate;
-}
-
-.photo-placeholder::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-  mix-blend-mode: soft-light;
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-.photo-placeholder.is-dark {
-  background:
-    radial-gradient(120% 90% at 30% 20%, rgba(121, 71, 45, 0.6), transparent 60%),
-    radial-gradient(90% 90% at 80% 90%, rgba(155, 129, 40, 0.3), transparent 60%),
-    linear-gradient(160deg, #5a5650 0%, #494640 50%, #35332e 100%);
-}
-
-.photo-placeholder.is-warm {
-  background:
-    radial-gradient(120% 90% at 30% 20%, rgba(217, 214, 199, 0.45), transparent 60%),
-    radial-gradient(90% 90% at 80% 90%, rgba(73, 70, 64, 0.35), transparent 60%),
-    linear-gradient(160deg, #a06b4d 0%, #79472d 50%, #5d3521 100%);
-}
-
 /* Buttons */
 .btn-prime {
   position: relative;

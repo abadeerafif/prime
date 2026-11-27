@@ -16,8 +16,11 @@ import { DoctorCard } from "@/components/ui/DoctorCard";
 import { CtaBand } from "@/components/ui/CtaBand";
 import { RelatedLinks } from "@/components/ui/RelatedLinks";
 import { LinkCard, firstSentence } from "@/components/ui/LinkCard";
+import { Photo } from "@/components/ui/PhotoFrame";
+import { ImageReveal } from "@/components/motion/ImageReveal";
 import { Reveal } from "@/components/motion/Reveal";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { specialtyPhoto } from "@/lib/images";
 
 export function generateStaticParams() {
   return hubs.map((h) => ({ hub: h.id }));
@@ -43,6 +46,7 @@ export default async function HubPage({ params }: PageProps<"/[locale]/[hub]">) 
   const blocks = hub.blocks ?? [];
   const toc = blocks.filter((b) => b.title).map((b) => ({ id: b.id, label: t(b.title!, locale) }));
   const faqs = blockFaqs(blocks);
+  const heroPhoto = specialtyPhoto(hub.id);
 
   return (
     <main id="main">
@@ -57,6 +61,19 @@ export default async function HubPage({ params }: PageProps<"/[locale]/[hub]">) 
         tone="dark"
         primary={{ label: d.common.book, href: href(locale, "/book") }}
         showWhatsapp
+        aside={
+          heroPhoto ? (
+            <ImageReveal className="mask-arch aspect-[4/5] w-full max-w-sm" innerClassName="mask-arch">
+              <Photo
+                photo={heroPhoto}
+                alt={t(hub.name, locale)}
+                sizes="(min-width: 1024px) 32vw, (min-width: 768px) 45vw, 90vw"
+                className="h-full w-full mask-arch"
+                preload
+              />
+            </ImageReveal>
+          ) : undefined
+        }
       />
 
       <div data-theme-section="paper" className="section-y relative z-10">

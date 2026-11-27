@@ -8,13 +8,12 @@ import { useLocale } from "@/components/Providers";
 import { Reveal } from "@/components/motion/Reveal";
 import { SplitReveal } from "@/components/motion/SplitReveal";
 import { SectionLabel } from "@/components/ui/SectionLabel";
-import { PhotoFrame } from "@/components/ui/PhotoFrame";
+import { Photo } from "@/components/ui/PhotoFrame";
+import { specialtyPhoto } from "@/lib/images";
 import { PlusMinus } from "@/components/ui/Icons";
 
 type Item = { id: string; name: string; blurb: string; href: string };
 type Props = { label: string; title: string; intro?: string; more: string; items: Item[] };
-
-const TONES: Array<"light" | "dark" | "warm"> = ["light", "warm", "dark"];
 
 /**
  * Specialty index: a large typographic list with a sticky petal-shaped
@@ -158,6 +157,17 @@ export function Treatments({ label, title, intro, more, items }: Props) {
                     <div className="overflow-hidden">
                       {/* Indent = number column (w-8) + row gap (gap-5) */}
                       <div className="pb-8 ps-13">
+                        {(() => {
+                          const photo = specialtyPhoto(item.id);
+                          return photo ? (
+                            <Photo
+                              photo={photo}
+                              alt={item.name}
+                              sizes="(min-width: 768px) 45vw, 85vw"
+                              className="mask-petal mb-stack-sm aspect-[4/5] w-full max-w-xs"
+                            />
+                          ) : null;
+                        })()}
                         <p className="text-body max-w-[42ch] text-theme-muted">{item.blurb}</p>
                         <Link href={item.href} className="link-line text-label mt-stack-sm inline-block text-theme">
                           {more} <span className="inline-block rtl:-scale-x-100">→</span>
@@ -175,11 +185,22 @@ export function Treatments({ label, title, intro, more, items }: Props) {
           <div className="sticky top-anchor col-span-4 col-start-9 hidden lg:block">
             <Reveal y={32}>
               <div ref={preview} className="mask-petal relative aspect-[4/5] w-full overflow-hidden">
-                {items.map((item, i) => (
-                  <div key={item.id} data-panel className="absolute inset-0">
-                    <PhotoFrame className="h-full w-full" tone={TONES[i % TONES.length]} label={item.name} />
-                  </div>
-                ))}
+                {items.map((item, i) => {
+                  const photo = specialtyPhoto(item.id);
+                  return (
+                    <div key={item.id} data-panel className="absolute inset-0">
+                      {photo && (
+                        <Photo
+                          photo={photo}
+                          alt={item.name}
+                          sizes="(min-width: 1024px) 34vw, 1px"
+                          className="h-full w-full"
+                          loading={i === 0 ? "eager" : "lazy"}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
               </div>
               <div className="relative mt-stack min-h-[7rem]">
                 {items.map((item, i) => (

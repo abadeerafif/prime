@@ -11,6 +11,9 @@ import { t, type Bi } from "@/content/types";
 import { dictFor } from "@/dictionaries";
 import { PageHero } from "@/components/ui/PageHero";
 import { DoctorCard } from "@/components/ui/DoctorCard";
+import { Photo } from "@/components/ui/PhotoFrame";
+import { ImageReveal } from "@/components/motion/ImageReveal";
+import { photos } from "@/lib/images";
 import { Accordion } from "@/components/ui/Accordion";
 import { RelatedLinks } from "@/components/ui/RelatedLinks";
 import { LinkCard } from "@/components/ui/LinkCard";
@@ -67,6 +70,17 @@ export default async function HairHomePage({ params }: PageProps<"/[locale]/hair
         tone="stone"
         primary={{ label: L(H.hero.book), href: href(locale, `${HAIR}/book`) }}
         showWhatsapp
+        aside={
+          <ImageReveal className="mask-arch aspect-[4/5] w-full max-w-sm" innerClassName="mask-arch">
+            <Photo
+              photo={photos["hair-transplant"]}
+              alt={L(H.hero.h1)}
+              sizes="(min-width: 1024px) 32vw, (min-width: 768px) 45vw, 90vw"
+              className="h-full w-full mask-arch"
+              preload
+            />
+          </ImageReveal>
+        }
       >
         <Reveal className="mt-stack" delay={0.5}>
           <Link href={href(locale, `${HAIR}/am-i-a-candidate`)} className="link-line text-label inline-flex items-center gap-2 text-theme">

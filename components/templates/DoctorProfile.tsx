@@ -5,11 +5,9 @@ import { href, visibleLinks } from "@/content/registry";
 import { services } from "@/content/services";
 import { dictFor } from "@/dictionaries";
 import { PageHero } from "@/components/ui/PageHero";
-import { PhotoFrame } from "@/components/ui/PhotoFrame";
 import { Accordion } from "@/components/ui/Accordion";
 import { CtaBand } from "@/components/ui/CtaBand";
 import { LinkCard } from "@/components/ui/LinkCard";
-import { ImageReveal } from "@/components/motion/ImageReveal";
 import { Reveal } from "@/components/motion/Reveal";
 
 type Props = {
@@ -45,11 +43,6 @@ export function DoctorProfile({ doctor, locale, path, tone, intro, narrative, re
         tone={tone}
         primary={{ label: d.common.book, href: href(locale, bookHref) }}
         showWhatsapp
-        aside={
-          <ImageReveal className="mask-arch aspect-[3/4] w-full max-w-sm" innerClassName="mask-arch">
-            <PhotoFrame className="h-full w-full mask-arch" tone={tone === "dark" ? "dark" : "light"} label={`${d.common.portraitAlt} ${name}`} />
-          </ImageReveal>
-        }
       />
 
       <div data-theme-section={tone === "dark" ? "paper" : "ivory"} className="section-y relative z-10">
