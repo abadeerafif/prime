@@ -60,8 +60,10 @@ export function Providers({ locale, dict, children }: Props) {
             <Suspense fallback={null}>
               <RouteEffects />
             </Suspense>
-            <ScrollProgress />
             {children}
+            {/* Fixed, so DOM order is free. It must not sit directly before the
+                streamed layout segment, or hydration lands on it in place of <header>. */}
+            <ScrollProgress />
           </SmoothScroll>
         </IntroContext.Provider>
       </DictContext.Provider>

@@ -8,7 +8,7 @@ type Props = { label: string; title: string; items: { q: string; a: string }[]; 
 
 export function HomeFaq({ label, title, items, all }: Props) {
   return (
-    <section id="faq" data-theme-section="grey" className="section-y relative z-10">
+    <section id="faq" data-theme-section="paper" className="section-y relative z-10">
       <div className="container-prime grid-prime gap-y-10">
         <div className="col-span-4 md:col-span-6 lg:col-span-4">
           <SectionLabel className="mb-stack-sm">{label}</SectionLabel>

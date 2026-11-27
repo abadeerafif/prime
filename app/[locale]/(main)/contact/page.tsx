@@ -55,7 +55,7 @@ export default async function ContactPage({ params }: PageProps<"/[locale]/conta
             )}
           </Reveal>
           <Reveal className="col-span-4 md:col-span-6 lg:col-span-6 lg:col-start-7" delay={0.15}>
-            <div data-surface="dark" className="rounded-card-lg bg-charcoal p-card-lg text-theme">
+            <div data-surface="dark" className="rounded-card-lg bg-charcoal p-card-lg text-theme shadow-lift">
               <ConsultationForm variant="short" specialties={options.specialties} hairSpecialty={options.hairSpecialty} />
             </div>
           </Reveal>

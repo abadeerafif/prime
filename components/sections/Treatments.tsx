@@ -70,7 +70,7 @@ export function Treatments({ label, title, intro, more, items }: Props) {
           gsap.set(panel, { zIndex: 2 });
           gsap.fromTo(
             panel,
-            { clipPath: "inset(0 0 100% 0)", scale: 1.1 },
+            { clipPath: "inset(0 0 100% 0)", scale: 1.06 },
             { clipPath: "inset(0 0 0% 0)", scale: 1, duration: 1.1, ease: "primeInOut" },
           );
         } else {
@@ -136,13 +136,25 @@ export function Treatments({ label, title, intro, more, items }: Props) {
                     onClick={() => setExpanded(isOpen ? null : i)}
                     aria-expanded={isOpen}
                     aria-controls={`specialty-${item.id}`}
-                    className="flex min-h-16 w-full items-center gap-5 py-5 text-start lg:hidden"
+                    className="flex min-h-16 w-full items-center gap-5 py-4 text-start lg:hidden"
                   >
                     <span className="text-label w-8 shrink-0 tabular-nums text-accent">{String(i + 1).padStart(2, "0")}</span>
                     <span className={`font-display text-display-sm flex-1 transition-colors ${isOpen ? "text-accent" : "text-theme"}`}>
                       {item.name}
                     </span>
-                    <PlusMinus open={isOpen} className="ms-auto h-5 w-5" />
+                    {/* A glimpse of the photograph; it gives way to the full image when the row opens. */}
+                    {(() => {
+                      const photo = specialtyPhoto(item.id);
+                      return photo ? (
+                        <Photo
+                          photo={photo}
+                          alt=""
+                          sizes="48px"
+                          className={`mask-petal h-12 w-10 shrink-0 transition-[opacity,scale] duration-500 ${isOpen ? "scale-75 opacity-0" : "opacity-100"}`}
+                        />
+                      ) : null;
+                    })()}
+                    <PlusMinus open={isOpen} className="h-5 w-5 shrink-0" />
                   </button>
 
                   <div
@@ -184,25 +196,28 @@ export function Treatments({ label, title, intro, more, items }: Props) {
           {/* Sticky petal preview (lg and up) */}
           <div className="sticky top-anchor col-span-4 col-start-9 hidden lg:block">
             <Reveal y={32}>
-              <div ref={preview} className="mask-petal relative aspect-[4/5] w-full overflow-hidden">
-                {items.map((item, i) => {
-                  const photo = specialtyPhoto(item.id);
-                  return (
-                    <div key={item.id} data-panel className="absolute inset-0">
-                      {photo && (
-                        <Photo
-                          photo={photo}
-                          alt={item.name}
-                          sizes="(min-width: 1024px) 34vw, 1px"
-                          className="h-full w-full"
-                          loading={i === 0 ? "eager" : "lazy"}
-                        />
-                      )}
-                    </div>
-                  );
-                })}
+              <div className="relative">
+                <span className="pointer-events-none absolute -inset-3 mask-petal border border-gold/50" aria-hidden />
+                <div ref={preview} className="mask-petal relative aspect-[4/5] w-full overflow-hidden">
+                  {items.map((item, i) => {
+                    const photo = specialtyPhoto(item.id);
+                    return (
+                      <div key={item.id} data-panel className="absolute inset-0">
+                        {photo && (
+                          <Photo
+                            photo={photo}
+                            alt={item.name}
+                            sizes="(min-width: 1024px) 34vw, 1px"
+                            className="h-full w-full"
+                            loading={i === 0 ? "eager" : "lazy"}
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-              <div className="relative mt-stack min-h-[7rem]">
+              <div className="relative mt-stack-lg min-h-[7rem]">
                 {items.map((item, i) => (
                   <p
                     key={item.id}

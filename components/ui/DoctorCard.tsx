@@ -21,7 +21,8 @@ export function DoctorCard({ doctor, locale, variant = "card", text, index }: Pr
   if (variant === "inline") {
     return (
       <div className="card-prime rounded-card-lg">
-        <p className="text-label mb-3 text-accent">{dict.common.yourDoctor}</p>
+        <span className="hairline-gold mb-4 block w-10" aria-hidden />
+        <p className="text-label mb-1 text-accent">{dict.common.yourDoctor}</p>
         <p className="font-display text-display-sm text-theme">{name}</p>
         <p className="text-body mt-2 text-theme-muted">{t(doctor.title, locale)}</p>
         {badges.length > 0 && (
@@ -43,16 +44,18 @@ export function DoctorCard({ doctor, locale, variant = "card", text, index }: Pr
   }
 
   return (
-    <Link
-      href={profile}
-      className="card-prime group flex h-full flex-col rounded-card-lg transition-colors duration-500 hover:border-[var(--accent)]"
-    >
-      {index !== undefined && (
-        <div className="mb-stack-sm flex items-center gap-4">
-          <span className="text-label shrink-0 tabular-nums text-accent">{String(index).padStart(2, "0")}</span>
-          <span className="hairline block flex-1" aria-hidden />
-        </div>
-      )}
+    <Link href={profile} className="card-prime card-link group flex h-full flex-col rounded-card-lg">
+      <div className="mb-stack flex items-end gap-4">
+        {index !== undefined && (
+          <span className="font-display-latin shrink-0 text-display-sm leading-none tabular-nums text-accent" dir="ltr">
+            {String(index).padStart(2, "0")}
+          </span>
+        )}
+        <span className="relative mb-1.5 block flex-1" aria-hidden>
+          <span className="hairline block w-full" />
+          <span className="hairline-gold absolute inset-x-0 top-0 block origin-left scale-x-0 transition-transform duration-700 ease-prime group-hover:scale-x-100 group-focus-visible:scale-x-100 rtl:origin-right" />
+        </span>
+      </div>
       <p className="font-display text-display-sm text-theme transition-colors duration-500 group-hover:text-accent">{name}</p>
       <p className="text-body mt-2 max-w-[32ch] text-theme-muted">{t(doctor.title, locale)}</p>
       {badges.length > 0 && (
@@ -67,7 +70,7 @@ export function DoctorCard({ doctor, locale, variant = "card", text, index }: Pr
       <p className="text-body mt-stack-sm text-theme-muted">{t(doctor.headline, locale)}</p>
       <span className="text-label mt-auto inline-flex items-center gap-2 pt-stack text-theme">
         <span className="link-line">{dict.common.fullProfile}</span>
-        <ArrowIcon className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
+        <ArrowIcon className="arrow-nudge h-4 w-4" />
       </span>
     </Link>
   );

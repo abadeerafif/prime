@@ -53,6 +53,47 @@ export function Navigation({ config }: { config: NavConfig }) {
     holdRef.current = open || panel !== null;
   }, [open, panel]);
 
+  // The header takes the colours of whatever is painted beneath it, not the
+  // page theme (which switches at mid-viewport). A section with its own
+  // surface (dark hero, curtain, footer) wins; otherwise the body shows
+  // through, so the page theme applies. Without this, a short dark hero on a
+  // phone leaves charcoal text on charcoal.
+  const [tone, setTone] = useState<string | null>(null);
+  useEffect(() => {
+    const el = header.current;
+    if (!el) return;
+    const root = document.documentElement;
+    let frame = 0;
+    const probe = () => {
+      frame = 0;
+      const y = Math.max(8, Math.min(el.offsetHeight, 96) / 2);
+      let next = root.dataset.theme ?? "ivory";
+      for (const hit of document.elementsFromPoint(window.innerWidth / 2, y)) {
+        if (el.contains(hit)) continue;
+        const section = hit.closest<HTMLElement>("[data-theme-section]");
+        if (section?.dataset.surface && section.dataset.themeSection) next = section.dataset.themeSection;
+        break;
+      }
+      setTone(next);
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(probe);
+    };
+    schedule();
+    const settle = window.setTimeout(schedule, 400);
+    const mo = new MutationObserver(schedule);
+    mo.observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.clearTimeout(settle);
+      mo.disconnect();
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, [pathname, introDone]);
+
   // Entrance after the preloader hands off, then hide/show on scroll direction
   // and pick up a backdrop once the page has moved.
   useGSAP(
@@ -227,7 +268,7 @@ export function Navigation({ config }: { config: NavConfig }) {
       <header
         ref={header}
         className={`site-header enter fixed inset-x-0 top-0 z-[75] text-theme ${(scrolled || panel !== null) && !open ? "is-scrolled" : ""}`}
-        data-surface={open ? "light" : undefined}
+        data-tone={open ? "ivory" : (tone ?? undefined)}
         onPointerLeave={() => hover(null)}
       >
         <div className={`container-prime flex items-center justify-between gap-6 transition-[padding] duration-500 ${scrolled ? "py-3 lg:py-4" : "py-5 lg:py-6"}`}>
@@ -236,9 +277,9 @@ export function Navigation({ config }: { config: NavConfig }) {
               {config.variant === "main" ? (
                 <span className="relative block h-8 w-[112px] sm:h-9 sm:w-[140px] lg:h-10 lg:w-[160px]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/brand/logo-landscape-charcoal-480.png" alt="" width={480} height={141} className={`absolute inset-0 h-full w-full object-contain object-left rtl:object-right ${open ? "" : "theme-dark:hidden"}`} />
+                  <img src="/brand/logo-landscape-charcoal-480.png" alt="" width={480} height={141} className="absolute inset-0 h-full w-full object-contain object-left tone-dark:hidden rtl:object-right" />
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/brand/logo-landscape-ivory-480.png" alt="" width={480} height={141} className={`absolute inset-0 hidden h-full w-full object-contain object-left rtl:object-right ${open ? "" : "theme-dark:block"}`} />
+                  <img src="/brand/logo-landscape-ivory-480.png" alt="" width={480} height={141} className="absolute inset-0 hidden h-full w-full object-contain object-left tone-dark:block rtl:object-right" />
                 </span>
               ) : (
                 <span className="flex items-center gap-3">
@@ -269,7 +310,12 @@ export function Navigation({ config }: { config: NavConfig }) {
                   onClick={() => setPanel(panel === i ? null : i)}
                   onPointerEnter={() => hover(i)}
                 >
-                  <span className={panel === i || groupCurrent(item) ? "text-accent" : ""}>{item.label}</span>
+                  <span
+                    className={`link-line ${panel === i || groupCurrent(item) ? "text-accent" : ""}`}
+                    data-current={groupCurrent(item) || undefined}
+                  >
+                    {item.label}
+                  </span>
                   <span
                     aria-hidden
                     className="block h-1.5 w-1.5 border-b border-e border-current transition-transform duration-500"
@@ -325,9 +371,10 @@ export function Navigation({ config }: { config: NavConfig }) {
               key={item.label}
               id={`nav-panel-${i}`}
               data-surface="light"
-              className="absolute inset-x-0 top-full hidden border-t border-theme bg-ivory-light text-charcoal shadow-[0_30px_60px_-40px_rgba(53,51,46,0.5)] lg:block"
+              className="absolute inset-x-0 top-full hidden border-t border-theme bg-ivory-light text-charcoal shadow-[0_40px_60px_-30px_rgba(53,51,46,0.45)] lg:block"
               style={{
-                clipPath: panel === i ? "inset(0 0 0% 0)" : "inset(0 0 100% 0)",
+                // Open past the bottom edge so the drop shadow is not clipped away.
+                clipPath: panel === i ? "inset(0 0 -100px 0)" : "inset(0 0 100% 0)",
                 transition: "clip-path .6s var(--ease-prime-in-out)",
                 pointerEvents: panel === i ? "auto" : "none",
               }}
@@ -344,9 +391,12 @@ export function Navigation({ config }: { config: NavConfig }) {
                             href={l.href}
                             onClick={closeAll}
                             aria-current={isCurrent(l.href) ? "page" : undefined}
-                            className={`font-display text-title transition-colors hover:text-accent ${isCurrent(l.href) ? "text-accent" : "text-theme"}`}
+                            className={`group/link inline-flex items-center gap-2.5 font-display text-title transition-colors hover:text-accent ${isCurrent(l.href) ? "text-accent" : "text-theme"}`}
                           >
-                            {l.label}
+                            {isCurrent(l.href) && <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />}
+                            <span className="transition-transform duration-500 group-hover/link:translate-x-1 rtl:group-hover/link:-translate-x-1">
+                              {l.label}
+                            </span>
                           </Link>
                         </li>
                       ))}
@@ -382,7 +432,7 @@ export function Navigation({ config }: { config: NavConfig }) {
       <div
         id="prime-menu"
         ref={overlay}
-        className="pointer-events-none fixed inset-0 z-[70] flex flex-col justify-between overflow-y-auto bg-ivory px-[var(--gutter)] pb-stack-lg pt-anchor text-charcoal"
+        className="pointer-events-none fixed inset-0 z-[70] flex flex-col justify-between overflow-y-auto bg-ivory px-[var(--gutter)] pb-[calc(var(--spacing-stack-lg)+env(safe-area-inset-bottom))] pt-anchor text-charcoal"
         style={{ clipPath: "inset(0 0 100% 0)" }}
         aria-hidden={!open}
         inert={!open}

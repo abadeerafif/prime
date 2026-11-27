@@ -81,7 +81,7 @@ export default async function HairBookPage({ params }: PageProps<"/[locale]/hair
 
           <div className="order-first col-span-4 md:col-span-6 lg:order-none lg:col-span-6 lg:col-start-7">
             <Reveal>
-              <div data-surface="dark" className="rounded-card-lg bg-charcoal p-card-lg text-theme">
+              <div data-surface="dark" className="rounded-card-lg bg-charcoal p-card-lg text-theme shadow-lift">
                 <ConsultationForm variant="hair" success={success} />
                 <p className="mt-stack-lg border-t border-[var(--line)] pt-6 text-sm text-theme-muted">{L(B.privacyNote)}</p>
               </div>

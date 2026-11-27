@@ -49,7 +49,7 @@ export function ActionBar({ locale, bookHref, bookLabel }: { locale: Locale; boo
           {dict.common.call}
         </a>
       )}
-      <Link href={book} className={`${item} bg-gold-light text-charcoal-deep active:bg-ivory-light`}>
+      <Link href={book} className={`${item} flex-[1.5] whitespace-nowrap bg-gold-light text-charcoal-deep active:bg-ivory-light`}>
         {bookLabel}
       </Link>
     </nav>

@@ -11,7 +11,7 @@ type Props = { label: string; title: string; cards: Card[]; all: { label: string
 export function Guide({ label, title, cards, all, readLabel }: Props) {
   if (!cards.length) return null;
   return (
-    <section id="guide" data-theme-section="grey" className="relative z-10 pt-section">
+    <section id="guide" data-theme-section="ivory" className="relative z-10 pt-section">
       <div className="container-prime">
         <div className="mb-head flex flex-wrap items-end justify-between gap-6">
           <div>

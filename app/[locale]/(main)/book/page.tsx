@@ -39,7 +39,7 @@ export default async function BookPage({ params }: PageProps<"/[locale]/book">) 
             <AddressBlock className="mt-stack-lg" address={site.address[locale]} mapLabel={d.common.openMap} />
           </Reveal>
           <Reveal className="order-1 col-span-4 md:col-span-6 lg:order-2 lg:col-span-7 lg:col-start-6">
-            <div data-surface="dark" className="rounded-card-lg bg-charcoal p-card-lg text-theme">
+            <div data-surface="dark" className="rounded-card-lg bg-charcoal p-card-lg text-theme shadow-lift">
               <ConsultationForm
                 variant="general"
                 specialties={options.specialties}

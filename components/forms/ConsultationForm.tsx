@@ -178,7 +178,7 @@ export function ConsultationForm({ variant, specialties = [], hairSpecialty, doc
                 name="consent"
                 type="checkbox"
                 required
-                className="mt-[0.3em] h-5 w-5 shrink-0 cursor-pointer accent-[var(--accent)]"
+                className="check mt-[0.25em]"
                 aria-invalid={Boolean(errors.consent)}
                 aria-describedby={errors.consent ? `${fid("consent")}-error` : undefined}
               />

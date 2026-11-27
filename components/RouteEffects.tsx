@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { ScrollTrigger } from "@/lib/gsap";
 import { useIntro, useLocale } from "@/components/Providers";
 import { ThemeShift } from "@/components/motion/ThemeShift";
+import { CardGlow } from "@/components/motion/CardGlow";
 
 /**
  * Per-navigation housekeeping. Inner pages have no preloader, so the intro is
@@ -23,5 +24,10 @@ export function RouteEffects() {
     return () => cancelAnimationFrame(id);
   }, [pathname, locale, setIntroDone]);
 
-  return <ThemeShift routeKey={pathname} />;
+  return (
+    <>
+      <ThemeShift routeKey={pathname} />
+      <CardGlow />
+    </>
+  );
 }

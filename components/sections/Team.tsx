@@ -15,7 +15,7 @@ export function Team({ locale, label, title, doctors }: { locale: Locale; label:
         </SplitReveal>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {doctors.map((d, i) => (
-            <Reveal key={d.id} delay={i * 0.1} y={32} className="h-full">
+            <Reveal key={d.id} delay={i * 0.12} y={28} className="h-full">
               <DoctorCard doctor={d} locale={locale} index={i + 1} />
             </Reveal>
           ))}

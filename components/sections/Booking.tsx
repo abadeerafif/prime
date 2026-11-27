@@ -114,9 +114,11 @@ export function Booking({ label, titleLines, intro, whatsappLabel, address, open
               ref={seal}
               tone="ivory"
               strokeWidth={5}
-              className="pointer-events-none h-auto w-[min(28vw,120px)] self-end opacity-0 lg:w-[min(10vw,140px)]"
+              className="pointer-events-none hidden h-auto self-end opacity-0 lg:block lg:w-[min(10vw,140px)]"
             />
-            <ConsultationForm variant="general" specialties={specialties} hairSpecialty={hairSpecialty} doctors={doctors} />
+            <div className="md:rounded-card-lg md:border md:border-[var(--line)] md:bg-charcoal-deep/45 md:p-card-lg md:shadow-float">
+              <ConsultationForm variant="general" specialties={specialties} hairSpecialty={hairSpecialty} doctors={doctors} />
+            </div>
           </div>
         </div>
       </section>

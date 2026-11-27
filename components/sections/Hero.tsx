@@ -65,7 +65,8 @@ export function Hero({ brand, lines, intro, cta, secondary, scroll, imageAlt }: 
       const st = { trigger: section.current, start: "top top", end: "bottom top", scrub: true };
       gsap.to(headline.current, { yPercent: -35, ease: "none", scrollTrigger: st });
       gsap.to(frame.current, { yPercent: 12, scale: 1.08, ease: "none", scrollTrigger: st });
-      gsap.to(meta.current, { yPercent: -60, autoAlpha: 0, ease: "none", scrollTrigger: { ...st, end: "60% top" } });
+      // Copy and buttons drift up but stay legible; never fade to a disabled look.
+      gsap.to(meta.current, { yPercent: -60, autoAlpha: 0.85, ease: "none", scrollTrigger: { ...st, end: "60% top" } });
       gsap.to(cue.current, { autoAlpha: 0, ease: "none", scrollTrigger: { ...st, end: "15% top" } });
     },
     { dependencies: [introDone] },
@@ -81,7 +82,7 @@ export function Hero({ brand, lines, intro, cta, secondary, scroll, imageAlt }: 
       id="hero"
       ref={section}
       data-theme-section="ivory"
-      className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden pb-[clamp(3rem,8vh,6rem)] pt-32 lg:justify-center lg:pb-16 lg:pt-anchor"
+      className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden pb-[calc(4.5rem+env(safe-area-inset-bottom))] pt-28 lg:justify-center lg:pb-16 lg:pt-anchor"
     >
       <div className="container-prime grid-prime relative items-end">
         {/* Headline across the leading 8 columns, layered above the image */}
@@ -116,7 +117,7 @@ export function Hero({ brand, lines, intro, cta, secondary, scroll, imageAlt }: 
         {/* Arched frame on the trailing side, overlapping the headline slightly */}
         <div
           ref={frame}
-          className="relative z-0 col-span-2 col-start-3 mt-4 md:col-span-3 md:col-start-4 lg:col-span-4 lg:col-start-9 lg:row-start-1 lg:mt-0 lg:translate-y-[2vh]"
+          className="relative z-0 col-span-2 col-start-3 mt-2 md:col-span-3 md:col-start-4 lg:col-span-4 lg:col-start-9 lg:row-start-1 lg:mt-0 lg:translate-y-[2vh]"
         >
           <ImageReveal
             className="mask-arch aspect-[3/4] max-h-[62vh] w-full"
@@ -134,7 +135,7 @@ export function Hero({ brand, lines, intro, cta, secondary, scroll, imageAlt }: 
               preload
             />
           </ImageReveal>
-          <span className="pointer-events-none absolute -inset-3 -z-10 mask-arch border border-gold/40" aria-hidden />
+          <span className="pointer-events-none absolute -inset-3 -z-10 mask-arch border border-gold/60" aria-hidden />
         </div>
 
         {/* Supporting sentence and calls to action */}

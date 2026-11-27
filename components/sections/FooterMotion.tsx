@@ -45,9 +45,16 @@ export function FooterWordmark() {
 export function BackToTop({ label }: { label: string }) {
   const { scrollTo } = useSmoothScroll();
   return (
-    <button type="button" onClick={() => scrollTo(0)} className="link-line inline-flex items-center gap-3">
-      {label}
-      <span aria-hidden className="inline-block h-6 w-px bg-current" />
+    <button type="button" onClick={() => scrollTo(0)} className="group inline-flex min-h-11 items-center gap-3">
+      <span className="link-line">{label}</span>
+      <span
+        aria-hidden
+        className="grid h-9 w-9 place-items-center rounded-full border border-current/30 transition-[translate,border-color] duration-500 group-hover:-translate-y-1 group-hover:border-current"
+      >
+        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M12 19V5M6 11l6-6 6 6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </span>
     </button>
   );
 }

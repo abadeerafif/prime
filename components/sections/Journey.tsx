@@ -111,7 +111,7 @@ export function Journey({ dict }: Props) {
             <li
               key={step.title}
               data-step
-              className="relative min-h-[32vh] ps-16 pb-head lg:min-h-[40vh]"
+              className="relative ps-16 pb-head last:pb-0 lg:min-h-[40vh] lg:last:pb-head"
               aria-current={active === i ? "step" : undefined}
             >
               <BloomMark

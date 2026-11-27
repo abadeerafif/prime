@@ -81,7 +81,9 @@ export function Philosophy({ label, statement: statementText, pillars: items, li
             },
           });
 
-          tl.fromTo(self.words, { opacity: 0.18 }, { opacity: 1, stagger: 0.6, duration: 1.2, ease: "none" })
+          // Words stay readable from the start and rise into place, rather
+          // than climbing out of near-invisible.
+          tl.fromTo(self.words, { opacity: 0.4, y: "0.25em" }, { opacity: 1, y: 0, stagger: 0.6, duration: 1.2, ease: "none" })
             .to({}, { duration: 1 })
             .to(text, { yPercent: -40, autoAlpha: 0, duration: 3, ease: "primeInOut" })
             .fromTo(
@@ -105,7 +107,7 @@ export function Philosophy({ label, statement: statementText, pillars: items, li
     <section
       id="philosophy"
       ref={section}
-      data-theme-section="grey"
+      data-theme-section="paper"
       className={pinned ? "relative h-[200vh]" : "section-y relative"}
     >
       <div className={pinned ? "sticky top-0 flex h-screen flex-col justify-center overflow-hidden" : ""}>

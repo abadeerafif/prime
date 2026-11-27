@@ -83,9 +83,9 @@ export function CandidacyQuiz({ questions, result, dynamicRecent, dynamicPreviou
             <p className="text-label text-accent">
               {labels.step} {step + 1} {labels.of} {questions.length}
             </p>
-            <span className="relative h-px flex-1 bg-[var(--line)]" aria-hidden>
+            <span className="relative h-0.5 flex-1 overflow-hidden rounded-full bg-[var(--line)]" aria-hidden>
               <span
-                className="absolute inset-y-0 start-0 bg-accent transition-[width] duration-500"
+                className="absolute inset-y-0 start-0 rounded-full bg-accent transition-[width] duration-700 ease-[var(--ease-prime)]"
                 style={{ width: `${(step / questions.length) * 100}%` }}
               />
             </span>
