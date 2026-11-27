@@ -1,5 +1,5 @@
 import localFont from "next/font/local";
-import { Fraunces, IBM_Plex_Sans_Arabic } from "next/font/google";
+import { Fraunces, IBM_Plex_Sans_Arabic, Noto_Naskh_Arabic } from "next/font/google";
 
 /**
  * Avenir Book (400) and Medium (500), extracted from the supplied collection.
@@ -32,13 +32,24 @@ export const avenirHeavy = localFont({
 
 /**
  * Arabic text face: real 400 to 700 weights for body, labels and buttons.
- * Not preloaded: English pages never use it, and on Arabic pages the
- * render-blocking stylesheet starts the download at first layout.
+ * Preloaded because Arabic is the default locale.
  */
 export const plexArabic = IBM_Plex_Sans_Arabic({
   variable: "--font-arabic-body",
   display: "swap",
-  preload: false,
+  preload: true,
+  subsets: ["arabic"],
+  weight: ["400", "500", "600", "700"],
+});
+
+/**
+ * Arabic display face. Noto Naskh has real 400 to 700 weights, so headlines
+ * can take emphasis without a faux bold. Preloaded with the body face.
+ */
+export const notoNaskhArabic = Noto_Naskh_Arabic({
+  variable: "--font-arabic-display",
+  display: "swap",
+  preload: true,
   subsets: ["arabic"],
   weight: ["400", "500", "600", "700"],
 });
@@ -54,10 +65,10 @@ export const fraunces = Fraunces({
   weight: "variable",
 });
 
-/**
- * The Arabic display face (Al Tarikh) is declared in globals.css against a
- * stable /fonts URL so the Arabic layout alone can preload it.
- */
-export const AL_TARIKH_URL = "/fonts/al-tarikh.woff2";
-
-export const fontVariables = [avenir.variable, avenirHeavy.variable, plexArabic.variable, fraunces.variable].join(" ");
+export const fontVariables = [
+  avenir.variable,
+  avenirHeavy.variable,
+  plexArabic.variable,
+  notoNaskhArabic.variable,
+  fraunces.variable,
+].join(" ");

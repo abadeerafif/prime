@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { dirFor, isLocale, locales } from "@/lib/i18n";
-import { AL_TARIKH_URL, fontVariables } from "@/lib/fonts";
+import { fontVariables } from "@/lib/fonts";
 import { site } from "@/lib/site";
 import { clientDictFor, dictFor, getDictionary } from "@/dictionaries";
 import { Providers } from "@/components/Providers";
@@ -42,7 +42,6 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[lo
       suppressHydrationWarning
     >
       <head>
-        {locale === "ar" ? <link rel="preload" href={AL_TARIKH_URL} as="font" type="font/woff2" crossOrigin="anonymous" /> : null}
         <noscript
           dangerouslySetInnerHTML={{
             __html: "<style>[data-preloader]{display:none!important}[data-reveal]{opacity:1!important;translate:none!important}.invisible{visibility:visible!important}</style>",
