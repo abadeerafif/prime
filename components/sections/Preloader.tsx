@@ -132,7 +132,7 @@ export function Preloader({ tagline }: { tagline: string }) {
         ref={bloomWrap}
         className="pointer-events-none absolute left-1/2 top-1/2 w-[min(70vw,320px)] -translate-x-1/2 -translate-y-1/2 lg:w-[min(30vw,380px)]"
       >
-        <BloomMark ref={bloom} tone="gold" strokeWidth={10} className="invisible h-auto w-full" />
+        <BloomMark ref={bloom} tone="gold" className="invisible h-auto w-full" />
       </div>
       <div className="absolute inset-x-0 bottom-[12vh] flex flex-col items-center text-charcoal">
         <p ref={text} className="font-display text-display-sm invisible">

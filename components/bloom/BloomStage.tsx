@@ -155,8 +155,6 @@ export function BloomStage() {
       <BloomMark
         ref={svg}
         tone="gold"
-        strokeWidth={6}
-        solidSparkles
         className="h-auto w-[min(120vw,70vh)] opacity-90 lg:w-[min(60vw,80vh)]"
       />
     </div>

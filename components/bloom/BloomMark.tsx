@@ -2,71 +2,90 @@
 
 import { forwardRef, useId, type SVGProps } from "react";
 
-type Pt = [number, number];
+/**
+ * Same canvas as public/brand/logo-icon.png (1808 × 1297), so the vector mark
+ * overlays the official PNG one to one.
+ */
+export const BLOOM_VIEWBOX = "0 0 1808 1297";
 
-/** Lens (petal) outline between A and B with the given half-width. */
-function lens(a: Pt, b: Pt, bulge: number): string {
-  const [ax, ay] = a;
-  const [bx, by] = b;
-  const dx = bx - ax;
-  const dy = by - ay;
-  const len = Math.hypot(dx, dy) || 1;
-  const nx = -dy / len;
-  const ny = dx / len;
-  // 4/3 factor so a cubic reaches the intended height at its midpoint.
-  const k = bulge * 1.333;
-  const p = (t: number, s: number): string =>
-    `${(ax + dx * t + nx * k * s).toFixed(1)} ${(ay + dy * t + ny * k * s).toFixed(1)}`;
-  return `M ${ax} ${ay} C ${p(0.33, 1)}, ${p(0.67, 1)}, ${bx} ${by} C ${p(0.67, -1)}, ${p(0.33, -1)}, ${ax} ${ay} Z`;
-}
+/** Line weight of the official mark, in viewBox units (≈1.9% of its width). */
+export const BLOOM_STROKE = 34.6;
 
-/** Four-point sparkle centred at (cx, cy). */
-function sparkle(cx: number, cy: number, r: number): string {
-  const i = r * 0.18;
-  return [
-    `M ${cx} ${cy - r}`,
-    `Q ${cx + i} ${cy - i} ${cx + r} ${cy}`,
-    `Q ${cx + i} ${cy + i} ${cx} ${cy + r}`,
-    `Q ${cx - i} ${cy + i} ${cx - r} ${cy}`,
-    `Q ${cx - i} ${cy - i} ${cx} ${cy - r} Z`,
-  ].join(" ");
-}
+/** The outlined top sparkle uses a finer line in the logo. */
+const TOP_SPARKLE_STROKE = 11.5;
 
-export const BLOOM_VIEWBOX = "0 0 1024 730";
-
+/**
+ * Centrelines traced from public/brand/logo-icon.png (overlay IoU ≈ 0.97).
+ * The mark is a few long interlaced strokes; they are split at smooth points
+ * into four petal paths so each tip stays a sharp miter join and the draw-on
+ * animation still reads petal by petal. Do not hand-edit — re-trace instead.
+ */
 export const BLOOM_PATHS = {
   petals: [
-    lens([14, 560], [596, 468], 92), // lower left
-    lens([1010, 560], [428, 468], 92), // lower right
-    lens([246, 84], [552, 452], 118), // upper left
-    lens([778, 84], [472, 452], 118), // upper right
-    lens([512, 470], [512, 724], 66), // bud
+    // upper-left petal
+    "M 905 779.8 C 898.7 779.5 897.2 779.7 886 778.9 C 874.8 778.1 854 777.2 838.1 775.1 C 822.2 773.1 806.4 770.2 790.8 766.6 C 775.2 763 759.7 758.6 744.6 753.4 C 729.4 748.2 714.6 742 700 735.4 C 685.5 728.7 671.1 721.5 657.3 713.5 C 643.5 705.5 630 696.7 617 687.3 C 604.1 677.9 591.7 667.7 579.7 657.1 C 567.7 646.5 556 635.5 545.1 623.8 C 534.2 612.1 523.8 599.7 514.2 587 C 504.5 574.3 495.5 560.9 487.1 547.3 C 478.7 533.7 471 519.6 464 505.3 C 456.9 490.9 450.5 476.1 444.9 461.1 C 439.3 446.2 434.7 430.8 430.5 415.3 C 426.3 399.9 422.4 384.2 419.8 368.5 C 417.2 352.7 415.9 336.6 415 320.6 C 414 304.6 413.5 288.6 414 272.6 C 414.5 256.6 416.4 238.6 418 224.6 C 419.7 210.7 421.3 202 423.8 189.1 C 426.3 176.2 430 161 433.1 147 C 448 150.3 462.7 152.8 477.7 157 C 492.7 161.3 508.3 166.6 523.2 172.4 C 538.1 178.2 552.8 184.7 567.1 192 C 581.3 199.2 595.2 207.2 608.7 215.9 C 622.1 224.6 635.2 233.9 647.7 243.9 C 660.3 253.8 672.4 264.4 683.9 275.5 C 695.5 286.6 706.6 298.2 716.9 310.4 C 727.3 322.6 736.8 335.6 745.9 348.7 C 755.1 361.9 763.8 375.4 771.6 389.3 C 779.5 403.2 786.8 417.6 793.1 432.3 C 799.5 447 804.6 462.2 809.6 477.4 C 814.6 492.6 819.6 508 823.1 523.6 C 826.6 539.2 828.7 555.1 830.5 571 C 832.3 586.9 833.5 610 834 619 C 834.5 628 833.9 623 833.8 625",
+    // upper-right petal
+    "M 903 779.8 C 909.3 779.5 910.8 779.7 922 778.9 C 933.2 778.1 954 777.2 969.9 775.1 C 985.8 773.1 1001.6 770.2 1017.2 766.6 C 1032.8 763 1048.3 758.6 1063.4 753.4 C 1078.6 748.2 1093.4 742 1108 735.4 C 1122.5 728.7 1136.9 721.5 1150.7 713.5 C 1164.5 705.5 1178 696.7 1191 687.3 C 1203.9 677.9 1216.3 667.7 1228.3 657.1 C 1240.3 646.5 1252 635.5 1262.9 623.8 C 1273.8 612.1 1284.2 599.7 1293.8 587 C 1303.5 574.3 1312.5 560.9 1320.9 547.3 C 1329.3 533.7 1337 519.6 1344 505.3 C 1351.1 490.9 1357.5 476.1 1363.1 461.1 C 1368.7 446.2 1373.3 430.8 1377.5 415.3 C 1381.7 399.9 1385.6 384.2 1388.2 368.5 C 1390.8 352.7 1392.1 336.6 1393 320.6 C 1394 304.6 1394.5 288.6 1394 272.6 C 1393.5 256.6 1391.6 238.6 1390 224.6 C 1388.3 210.7 1386.7 202 1384.2 189.1 C 1381.7 176.2 1378 161 1374.9 147 C 1360 150.3 1345.3 152.8 1330.3 157 C 1315.3 161.3 1299.7 166.6 1284.8 172.4 C 1269.9 178.2 1255.2 184.7 1240.9 192 C 1226.7 199.2 1212.8 207.2 1199.3 215.9 C 1185.9 224.6 1172.8 233.9 1160.3 243.9 C 1147.7 253.8 1135.6 264.4 1124.1 275.5 C 1112.5 286.6 1101.4 298.2 1091.1 310.4 C 1080.7 322.6 1071.2 335.6 1062.1 348.7 C 1052.9 361.9 1044.2 375.4 1036.4 389.3 C 1028.5 403.2 1021.2 417.6 1014.9 432.3 C 1008.5 447 1003.4 462.2 998.4 477.4 C 993.4 492.6 988.4 508 984.9 523.6 C 981.4 539.2 979.3 555.1 977.5 571 C 975.7 586.9 974.5 610 974 619 C 973.5 628 974.1 623 974.2 625",
+    // lower-left petal + bud
+    "M 833.8 624 C 833.9 630.3 834.7 631.8 834.1 643 C 833.5 654.2 832.2 675.1 830.1 691 C 828 706.8 824.9 722.6 821.5 738.2 C 818.2 753.9 815.3 769.7 810.2 784.9 C 805.1 800 797.8 814.7 790.9 829.2 C 784.1 843.7 776.9 858 769 871.9 C 761 885.7 752.5 899.3 743.2 912.4 C 734 925.4 724 938.1 713.5 950.3 C 703 962.4 692 974.1 680.4 985.1 C 668.7 996.1 656.3 1006.3 643.6 1016.1 C 630.9 1025.9 617.9 1035.3 604.4 1043.8 C 590.8 1052.3 576.7 1059.8 562.3 1066.9 C 548 1074.1 533.4 1080.7 518.4 1086.4 C 503.5 1092.2 488.2 1097.2 472.8 1101.4 C 457.4 1105.6 441.7 1109 425.9 1111.6 C 410.1 1114.2 394.1 1116 378.1 1117 C 362.2 1118.1 346.1 1118.3 330.1 1117.8 C 314.2 1117.3 298.1 1116 282.3 1114 C 266.4 1112 250.5 1109.4 234.9 1105.9 C 219.3 1102.4 203.8 1098 188.7 1092.9 C 173.5 1087.9 158.5 1082 143.9 1075.6 C 129.3 1069.1 114.9 1062 101 1054.1 C 87.1 1046.1 73.6 1037.2 60.6 1028 C 47.6 1018.8 35.5 1008.7 23 999 C 33.5 986.9 43.5 974.3 54.5 962.6 C 65.5 951 76.9 939.6 88.9 929.1 C 100.9 918.5 113.5 908.5 126.4 899.1 C 139.4 889.7 152.8 881 166.6 872.9 C 180.4 864.8 194.6 857.3 209.2 850.5 C 223.7 843.8 238.5 837.7 253.7 832.5 C 268.8 827.3 284.4 823.2 300 819.6 C 315.6 816 331.3 813.1 347.2 810.9 C 363 808.8 379 807.2 395 806.6 C 411 806 427 806.2 443 807.1 C 459 808 475 809.4 490.8 811.9 C 506.6 814.4 522.3 818 537.8 822 C 553.2 826.1 568.6 830.8 583.6 836.3 C 598.6 841.8 613.5 848.1 627.8 855.1 C 642.2 862.2 656.3 870 669.9 878.4 C 683.5 886.8 696.3 896.6 709.5 905.6 C 722.7 914.7 737.4 921.8 749.2 932.6 C 761.1 943.5 770.2 958.1 780.4 970.7 C 790.6 983.3 800.9 995.4 810.3 1008.3 C 819.6 1021.3 828.4 1034.8 836.5 1048.5 C 844.6 1062.3 852.3 1076.5 859 1091 C 865.8 1105.5 872.9 1124.3 877.1 1135.6 C 881.2 1146.8 882 1152 884 1158.5 C 886 1165.1 887.4 1168.1 889.2 1175 C 891 1181.9 893.2 1191.7 894.7 1200 C 896.3 1208.3 897.4 1216.7 898.5 1225 C 899.6 1233.3 900.6 1241.7 901.5 1250 C 902.4 1258.3 903.2 1267.2 903.6 1275 C 904 1282.8 903.9 1289.7 904 1297",
+    // lower-right petal + bud
+    "M 974.2 624 C 974.1 630.3 973.3 631.8 973.9 643 C 974.5 654.2 975.8 675.1 977.9 691 C 980 706.8 983.1 722.6 986.5 738.2 C 989.8 753.9 992.7 769.7 997.8 784.9 C 1002.9 800 1010.2 814.7 1017.1 829.2 C 1023.9 843.7 1031.1 858 1039 871.9 C 1047 885.7 1055.5 899.3 1064.8 912.4 C 1074 925.4 1084 938.1 1094.5 950.3 C 1105 962.4 1116 974.1 1127.6 985.1 C 1139.3 996.1 1151.7 1006.3 1164.4 1016.1 C 1177.1 1025.9 1190.1 1035.3 1203.6 1043.8 C 1217.2 1052.3 1231.3 1059.8 1245.7 1066.9 C 1260 1074.1 1274.6 1080.7 1289.6 1086.4 C 1304.5 1092.2 1319.8 1097.2 1335.2 1101.4 C 1350.6 1105.6 1366.3 1109 1382.1 1111.6 C 1397.9 1114.2 1413.9 1116 1429.9 1117 C 1445.8 1118.1 1461.9 1118.3 1477.9 1117.8 C 1493.8 1117.3 1509.9 1116 1525.7 1114 C 1541.6 1112 1557.5 1109.4 1573.1 1105.9 C 1588.7 1102.4 1604.2 1098 1619.3 1092.9 C 1634.5 1087.9 1649.5 1082 1664.1 1075.6 C 1678.7 1069.1 1693.1 1062 1707 1054.1 C 1720.9 1046.1 1734.4 1037.2 1747.4 1028 C 1760.4 1018.8 1772.5 1008.7 1785 999 C 1774.5 986.9 1764.5 974.3 1753.5 962.6 C 1742.5 951 1731.1 939.6 1719.1 929.1 C 1707.1 918.5 1694.5 908.5 1681.6 899.1 C 1668.6 889.7 1655.2 881 1641.4 872.9 C 1627.6 864.8 1613.4 857.3 1598.8 850.5 C 1584.3 843.8 1569.5 837.7 1554.3 832.5 C 1539.2 827.3 1523.6 823.2 1508 819.6 C 1492.4 816 1476.7 813.1 1460.8 810.9 C 1445 808.8 1429 807.2 1413 806.6 C 1397 806 1381 806.2 1365 807.1 C 1349 808 1333 809.4 1317.2 811.9 C 1301.4 814.4 1285.7 818 1270.2 822 C 1254.8 826.1 1239.4 830.8 1224.4 836.3 C 1209.4 841.8 1194.5 848.1 1180.2 855.1 C 1165.8 862.2 1151.7 870 1138.1 878.4 C 1124.5 886.8 1111.7 896.6 1098.5 905.6 C 1085.3 914.7 1070.6 921.8 1058.8 932.6 C 1046.9 943.5 1037.8 958.1 1027.6 970.7 C 1017.4 983.3 1007.1 995.4 997.7 1008.3 C 988.4 1021.3 979.6 1034.8 971.5 1048.5 C 963.4 1062.3 955.7 1076.5 949 1091 C 942.2 1105.5 935.1 1124.3 930.9 1135.6 C 926.8 1146.8 926 1152 924 1158.5 C 922 1165.1 920.6 1168.1 918.8 1175 C 917 1181.9 914.8 1191.7 913.3 1200 C 911.8 1208.3 910.6 1216.7 909.5 1225 C 908.4 1233.3 907.4 1241.7 906.5 1250 C 905.6 1258.3 904.8 1267.2 904.4 1275 C 904 1282.8 904.1 1289.7 904 1297",
   ],
-  sparkles: [sparkle(512, 72, 70), sparkle(252, 388, 42), sparkle(772, 388, 42)],
-};
-
-type Props = SVGProps<SVGSVGElement> & {
-  /** "gold" uses the brand gradient; "ivory" or "charcoal" are flat strokes. */
-  tone?: "gold" | "ivory" | "charcoal" | "current";
-  strokeWidth?: number;
-  withSparkles?: boolean;
-  /** Fill sparkles solid like the logo. */
-  solidSparkles?: boolean;
+  sparkles: [
+    { d: "M 903.5 0.5 A 146.5 146.5 0 0 0 1050 147 A 146.5 146.5 0 0 0 903.5 293.5 A 146.5 146.5 0 0 0 757 147 A 146.5 146.5 0 0 0 903.5 0.5 Z", solid: false }, // top (outlined)
+    { d: "M 487.3 606.1 A 91.6 91.6 0 0 0 527.8 729.2 A 91.6 91.6 0 0 0 404.7 769.7 A 91.6 91.6 0 0 0 364.2 646.6 A 91.6 91.6 0 0 0 487.3 606.1 Z", solid: true }, // left (solid)
+    { d: "M 1322.6 606.1 A 91.6 91.6 0 0 0 1445.7 646.6 A 91.6 91.6 0 0 0 1405.2 769.7 A 91.6 91.6 0 0 0 1282.1 729.2 A 91.6 91.6 0 0 0 1322.6 606.1 Z", solid: true }, // right (solid)
+  ],
 };
 
 /**
- * The PRIME bloom rebuilt as strokeable SVG paths so it can be drawn,
- * rotated and recoloured. The official PNG lockups are still used where the
- * actual logo appears.
+ * Metallic gold sampled from the logo: a linear sweep across the x − y
+ * diagonal, bronze at the lower left, a pale highlight through the centre.
+ */
+const GOLD_STOPS: Array<[number, string]> = [
+  [0, "#685123"],
+  [0.027, "#6F5727"],
+  [0.115, "#856A32"],
+  [0.195, "#987C3C"],
+  [0.233, "#A28441"],
+  [0.32, "#BBA264"],
+  [0.364, "#C6B075"],
+  [0.432, "#DDCD99"],
+  [0.458, "#E5D7A5"],
+  [0.509, "#D7C38B"],
+  [0.591, "#BFA464"],
+  [0.682, "#A98D4D"],
+  [0.768, "#957838"],
+  [0.832, "#A28749"],
+  [0.945, "#C0A86E"],
+  [1, "#C2AD78"],
+];
+
+type Props = Omit<SVGProps<SVGSVGElement>, "strokeWidth"> & {
+  /** "gold" uses the logo gradient; "ivory" or "charcoal" are flat. */
+  tone?: "gold" | "ivory" | "charcoal" | "current";
+  /**
+   * Defaults to the logo's own weight. Only raise it where the mark renders
+   * so small that the true weight would fall below a device pixel.
+   */
+  strokeWidth?: number;
+  withSparkles?: boolean;
+};
+
+/**
+ * The PRIME bloom as strokeable SVG, geometrically matched to the official
+ * logo so it can be drawn, rotated and recoloured. Petal paths carry
+ * `.bloom-petal`, sparkles `.bloom-sparkle` for the GSAP animations.
  */
 export const BloomMark = forwardRef<SVGSVGElement, Props>(function BloomMark(
-  { tone = "gold", strokeWidth = 14, withSparkles = true, solidSparkles = true, className, ...rest },
+  { tone = "gold", strokeWidth = BLOOM_STROKE, withSparkles = true, className, ...rest },
   ref,
 ) {
   const id = useId().replace(/:/g, "");
   const gradId = `bloom-grad-${id}`;
-  const stroke =
+  const paint =
     tone === "gold" ? `url(#${gradId})` : tone === "ivory" ? "#D9D6C7" : tone === "charcoal" ? "#494640" : "currentColor";
+  const topSparkleStroke = TOP_SPARKLE_STROKE * (strokeWidth / BLOOM_STROKE);
 
   return (
     <svg
@@ -81,23 +100,27 @@ export const BloomMark = forwardRef<SVGSVGElement, Props>(function BloomMark(
     >
       {tone === "gold" && (
         <defs>
-          <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#C4AB5A" />
-            <stop offset="0.5" stopColor="#9B8128" />
-            <stop offset="1" stopColor="#7A6420" />
+          <linearGradient id={gradId} gradientUnits="userSpaceOnUse" x1="276.25" y1="1276.25" x2="1376.25" y2="176.25">
+            {GOLD_STOPS.map(([o, c]) => (
+              <stop key={o} offset={o} stopColor={c} />
+            ))}
           </linearGradient>
         </defs>
       )}
-      <g className="bloom-petals" stroke={stroke} strokeWidth={strokeWidth} strokeLinejoin="round" strokeLinecap="round">
+      <g className="bloom-petals" stroke={paint} strokeWidth={strokeWidth} strokeLinejoin="miter" strokeMiterlimit={10} strokeLinecap="butt">
         {BLOOM_PATHS.petals.map((d, i) => (
           <path key={i} d={d} className="bloom-petal" />
         ))}
       </g>
       {withSparkles && (
-        <g className="bloom-sparkles" fill={solidSparkles ? stroke : "none"} stroke={stroke} strokeWidth={solidSparkles ? 0 : strokeWidth * 0.6}>
-          {BLOOM_PATHS.sparkles.map((d, i) => (
-            <path key={i} d={d} className="bloom-sparkle" />
-          ))}
+        <g className="bloom-sparkles">
+          {BLOOM_PATHS.sparkles.map(({ d, solid }, i) =>
+            solid ? (
+              <path key={i} d={d} className="bloom-sparkle" fill={paint} />
+            ) : (
+              <path key={i} d={d} className="bloom-sparkle" stroke={paint} strokeWidth={topSparkleStroke} />
+            ),
+          )}
         </g>
       )}
     </svg>

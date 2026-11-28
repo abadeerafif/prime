@@ -113,7 +113,6 @@ export function Booking({ label, titleLines, intro, whatsappLabel, address, open
             <BloomMark
               ref={seal}
               tone="ivory"
-              strokeWidth={5}
               className="pointer-events-none hidden h-auto self-end opacity-0 lg:block lg:w-[min(10vw,140px)]"
             />
             <div className="md:rounded-card-lg md:border md:border-[var(--line)] md:bg-charcoal-deep/45 md:p-card-lg md:shadow-float">

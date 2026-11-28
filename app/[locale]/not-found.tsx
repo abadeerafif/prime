@@ -11,7 +11,6 @@ export default function NotFound() {
     >
       <BloomMark
         tone="gold"
-        strokeWidth={4}
         className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-auto w-[min(130vw,900px)] -translate-x-1/2 -translate-y-1/2 opacity-15"
       />
 

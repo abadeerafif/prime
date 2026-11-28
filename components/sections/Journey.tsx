@@ -59,15 +59,23 @@ export function Journey({ dict }: Props) {
       const marks = list.querySelectorAll<SVGSVGElement>("[data-step-bloom]");
       marks.forEach((mark, i) => {
         const petals = mark.querySelectorAll(".bloom-petal");
+        const sparkles = mark.querySelectorAll(".bloom-sparkle");
         if (i === active) {
           if (prefersReducedMotion()) {
             gsap.set(petals, { drawSVG: "0% 100%" });
+            gsap.set(sparkles, { scale: 1, autoAlpha: 1 });
             return;
           }
           gsap.fromTo(petals, { drawSVG: "50% 50%" }, { drawSVG: "0% 100%", duration: 1.4, stagger: 0.08, ease: "primeInOut" });
+          gsap.fromTo(
+            sparkles,
+            { scale: 0, autoAlpha: 0, transformOrigin: "50% 50%" },
+            { scale: 1, autoAlpha: 1, duration: 0.6, stagger: 0.05, delay: 0.8 },
+          );
           gsap.fromTo(mark, { rotate: -20, scale: 0.8 }, { rotate: 0, scale: 1, duration: 1.4, ease: "prime" });
         } else {
           gsap.to(petals, { drawSVG: "50% 50%", duration: 0.6, ease: "primeInOut" });
+          gsap.to(sparkles, { scale: 0, autoAlpha: 0, transformOrigin: "50% 50%", duration: 0.4 });
         }
       });
     },
@@ -117,8 +125,6 @@ export function Journey({ dict }: Props) {
               <BloomMark
                 data-step-bloom
                 tone="gold"
-                withSparkles={false}
-                strokeWidth={28}
                 className="absolute -start-[13px] top-1 h-auto w-12"
               />
               <Reveal y={24}>

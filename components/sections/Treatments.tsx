@@ -24,6 +24,7 @@ type Props = { label: string; title: string; intro?: string; more: string; items
 export function Treatments({ label, title, intro, more, items }: Props) {
   const list = useRef<HTMLUListElement>(null);
   const preview = useRef<HTMLDivElement>(null);
+  const prev = useRef(0);
   const [active, setActive] = useState(0);
   const [expanded, setExpanded] = useState<number | null>(null);
   const [hoverable, setHoverable] = useState(true);
@@ -61,22 +62,41 @@ export function Treatments({ label, title, intro, more, items }: Props) {
     () => {
       const panels = preview.current?.querySelectorAll<HTMLElement>("[data-panel]");
       if (!panels) return;
-      if (prefersReducedMotion()) {
-        panels.forEach((panel, i) => gsap.set(panel, { zIndex: i === active ? 2 : 1, clipPath: "inset(0 0 0% 0)", scale: 1 }));
+      const outgoing = prev.current;
+      prev.current = active;
+
+      // Drop any running wipe so tweens never fight over a panel.
+      gsap.killTweensOf(panels);
+
+      // Instant swap on first mount and for reduced motion.
+      if (outgoing === active || prefersReducedMotion()) {
+        panels.forEach((panel, i) =>
+          gsap.set(panel, { zIndex: i === active ? 3 : 1, clipPath: "inset(0 0 0% 0)", scale: 1 }),
+        );
         return;
       }
+
+      // Stack order is applied right away: incoming on top, outgoing just
+      // beneath it (keeping whatever it already shows), everything else below.
       panels.forEach((panel, i) => {
-        if (i === active) {
-          gsap.set(panel, { zIndex: 2 });
-          gsap.fromTo(
-            panel,
-            { clipPath: "inset(0 0 100% 0)", scale: 1.06 },
-            { clipPath: "inset(0 0 0% 0)", scale: 1, duration: 1.1, ease: "primeInOut" },
-          );
-        } else {
-          gsap.set(panel, { zIndex: 1, clipPath: "inset(0 0 0% 0)", delay: 1.1 });
-        }
+        if (i === active) gsap.set(panel, { zIndex: 3 });
+        else if (i === outgoing) gsap.set(panel, { zIndex: 2 });
+        else gsap.set(panel, { zIndex: 1, clipPath: "inset(0 0 0% 0)", scale: 1 });
       });
+
+      gsap.fromTo(
+        panels[active],
+        { clipPath: "inset(0 0 100% 0)", scale: 1.04 },
+        {
+          clipPath: "inset(0 0 0% 0)",
+          scale: 1,
+          duration: 0.55,
+          ease: "prime",
+          onComplete: () => {
+            gsap.set(panels[outgoing], { zIndex: 1, clipPath: "inset(0 0 0% 0)", scale: 1 });
+          },
+        },
+      );
     },
     { dependencies: [active] },
   );
@@ -114,7 +134,7 @@ export function Treatments({ label, title, intro, more, items }: Props) {
                     className="group hidden min-h-16 w-full items-center gap-8 py-6 text-start lg:flex"
                     style={{
                       transform: `translateX(${isActive ? sign * 10 : 0}px)`,
-                      transition: "transform .6s var(--ease-prime)",
+                      transition: "transform .4s var(--ease-prime)",
                     }}
                   >
                     <span className="text-label w-8 shrink-0 tabular-nums text-accent">{String(i + 1).padStart(2, "0")}</span>
@@ -209,7 +229,8 @@ export function Treatments({ label, title, intro, more, items }: Props) {
                             alt={item.name}
                             sizes="(min-width: 1024px) 34vw, 1px"
                             className="h-full w-full"
-                            loading={i === 0 ? "eager" : "lazy"}
+                            preload={i === 0}
+                            loading="eager"
                           />
                         )}
                       </div>
@@ -225,7 +246,7 @@ export function Treatments({ label, title, intro, more, items }: Props) {
                     style={{
                       opacity: active === i ? 1 : 0,
                       transform: `translateY(${active === i ? 0 : 12}px)`,
-                      transition: "opacity .7s var(--ease-prime), transform .7s var(--ease-prime)",
+                      transition: "opacity .4s var(--ease-prime), transform .4s var(--ease-prime)",
                     }}
                     aria-hidden={active !== i}
                   >

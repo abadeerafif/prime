@@ -17,7 +17,8 @@ export function TrustStrip({ items }: { items: string[] }) {
                 i >= 2 ? "border-t border-theme lg:border-t-0" : ""
               } ${i === 2 ? "lg:border-s" : ""}`}
             >
-              <BloomMark tone="gold" withSparkles={false} strokeWidth={36} className="h-auto w-6 shrink-0" />
+              {/* At 24px the logo's own weight is under half a pixel; 72 keeps it at ~1px. */}
+              <BloomMark tone="gold" strokeWidth={72} className="h-auto w-6 shrink-0" />
               <span className="text-body text-theme">{item}</span>
             </Reveal>
           ))}

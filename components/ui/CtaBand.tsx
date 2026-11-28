@@ -17,8 +17,6 @@ export function CtaBand({ locale, text, bookHref = "/book", bookLabel, whatsappT
     <section data-theme-section="charcoal" data-surface="dark" className="relative z-10 overflow-hidden bg-charcoal py-[calc(var(--spacing-head)*1.4)] text-theme">
       <BloomMark
         tone="gold"
-        withSparkles={false}
-        strokeWidth={4}
         className="pointer-events-none absolute -end-[10%] top-1/2 h-auto w-[min(70vw,560px)] -translate-y-1/2 opacity-15"
       />
       <div className="container-prime relative">
