@@ -45,5 +45,5 @@ Copy `.env.example` to `.env.local` and fill in:
 - Page colour shifts are driven by `data-theme-section` on each section (`ivory`, `grey`, `wood`, `charcoal`) and mirrored onto `<html data-theme>`.
 - `prefers-reduced-motion` disables smooth scroll, pinning, parallax, reveals and draw animations.
 - Inner-page heroes and the header enter with CSS only (`.enter` in `globals.css`) so the headline paints before JavaScript loads; everything below the fold still uses GSAP.
-- Fonts: Avenir and Fraunces are preloaded everywhere; Al Tarikh is preloaded on Arabic pages only (declared in `globals.css`), and IBM Plex Sans Arabic loads on demand.
+- Fonts: Avenir and Fraunces for Latin; Palestine (Arabic headlines) and Al Tarikh (Arabic text) are the brand Arabic faces, self-hosted through `next/font/local` in `lib/fonts.ts` and limited to Arabic by `unicode-range`. All are preloaded. Originals live in `Fonts PRIME/`; the Arabic web files are generated from them with `npm run fonts` (adds OpenType joining to Al Tarikh and closes Palestine's join seams) — never edit `public/fonts/*.woff` by hand.
 - In development, append `#slow-intro` to the URL to watch the preloader choreography at reduced speed.

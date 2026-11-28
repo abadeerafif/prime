@@ -131,10 +131,30 @@ export function Footer({ locale, variant = "main" }: Props) {
       </div>
 
       <FooterWordmark />
-      <div className="container-prime flex justify-between py-5 text-label text-theme-muted">
+      <div className="container-prime flex flex-col gap-3 py-5 text-label text-theme-muted sm:flex-row sm:items-center sm:justify-between">
         <span>
           © <Year /> {d.footer.rights}
         </span>
+        <a
+          href={d.footer.creditHref}
+          target="_blank"
+          rel="noopener"
+          hrefLang={locale}
+          className="group inline-flex min-h-11 items-center gap-2 transition-colors duration-300 hover:text-ivory-light"
+        >
+          <span>{d.footer.creditPrefix}</span>
+          <span className="link-line text-ivory">{d.footer.creditName}</span>
+          <svg
+            aria-hidden
+            viewBox="0 0 24 24"
+            className="h-3.5 w-3.5 transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover:-translate-x-0.5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
+            <path d="M7 17 17 7M8 7h9v9" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </a>
       </div>
     </footer>
   );

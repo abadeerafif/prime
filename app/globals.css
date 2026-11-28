@@ -218,19 +218,22 @@
     Georgia, "Times New Roman", serif;
 }
 
-/* Arabic: Noto Naskh for headlines, IBM Plex Sans Arabic for text. Avenir
-   stays first in the text stack so Latin words, digits and phone numbers
-   keep the brand face; it has no Arabic glyphs, so Arabic falls through.
-   "avenir" is named directly: var(--font-avenir) carries an Arial-backed
-   fallback face that would render Arabic before Plex is reached.
-   Fraunces is the next/font variable, not the raw family name. Plex sits
-   after the Latin serifs so a missing Naskh file still has Arabic glyphs,
-   while Latin in a headline still resolves to Aquavit or Fraunces. */
+/* Arabic: Palestine for headlines, Al Tarikh for text (see lib/fonts.ts).
+   Both faces are limited to Arabic by unicode-range, so they lead their
+   stacks and anything else falls through: Latin words, Western digits,
+   phone numbers, dashes and quotes take Avenir in text and Aquavit or
+   Fraunces in headlines. "avenir" is named directly: var(--font-avenir)
+   carries an Arial-backed fallback face that would catch Arabic glyphs.
+   System Arabic faces close each stack for the moment before the brand
+   files arrive. Al Tarikh follows the Latin serifs in the display stack so
+   a missing Palestine file still renders Arabic in a brand face. */
 :root[lang="ar"],
 [lang="ar"] {
   --font-display-stack: var(--font-arabic-display), var(--font-aquavit, "aquavit"),
-    var(--font-fraunces), Georgia, var(--font-arabic-body), serif;
-  --font-body-stack: "avenir", var(--font-arabic-body), system-ui, sans-serif;
+    var(--font-fraunces), Georgia, var(--font-arabic-body), "Geeza Pro",
+    "Segoe UI", Tahoma, serif;
+  --font-body-stack: var(--font-arabic-body), "avenir", "Geeza Pro", "Segoe UI",
+    Tahoma, system-ui, sans-serif;
   /* Re-resolve here. Inherited --font-display is already substituted from
      the root language, so a later stack change would not reach font-family. */
   --font-display: var(--font-display-stack);
@@ -239,8 +242,10 @@
      English page has to set the family itself. Headlines override this. */
   font-family: var(--font-body);
 
-  /* Naskh sets close to its nominal size, so display sizes sit just above
-     the Latin scale. Leading stays open so dots and marks never collide. */
+  /* Both faces are size-adjusted in lib/fonts.ts, so this scale stays close
+     to the Latin one. Palestine's lam and alef rise almost a full em, so
+     display leading stays open enough that a line's descenders never touch
+     the ascenders of the line below. */
   --text-display-xl: clamp(2.75rem, 6.2vw, 7.25rem);
   --text-display-lg: clamp(2.25rem, 4.6vw, 5rem);
   --text-display-md: clamp(1.875rem, 3.2vw, 3.5rem);
@@ -250,11 +255,11 @@
   --text-body: clamp(1.0625rem, 1.05vw, 1.125rem);
   --text-label: clamp(0.875rem, 0.9vw, 0.9375rem);
 
-  --lh-display-xl: 1.25;
-  --lh-display-lg: 1.32;
-  --lh-display-md: 1.4;
-  --lh-display-sm: 1.48;
-  --lh-title: 1.5;
+  --lh-display-xl: 1.35;
+  --lh-display-lg: 1.4;
+  --lh-display-md: 1.45;
+  --lh-display-sm: 1.5;
+  --lh-title: 1.55;
   --lh-body: 1.9;
   --lh-body-lg: 1.85;
 
@@ -365,14 +370,18 @@ blockquote {
   text-wrap: pretty;
 }
 
-/* Real Naskh and Plex weights are loaded. :lang() follows the element's own
-   language, so an English phrase inside an Arabic page is left alone. */
-:is(.font-display, h1, h2, h3):lang(ar) {
+/* Palestine and Al Tarikh have one weight each, and a browser-faked bold
+   smears Arabic joins and dots. Weight is never synthesised in Arabic;
+   emphasis comes from colour (RichText sets strong in the full text colour
+   over muted copy). :lang() follows the element's own language, so an
+   English phrase inside an Arabic page keeps Avenir's real weights. */
+:lang(ar) {
   font-synthesis-weight: none;
 }
 
 :is(strong, b):lang(ar) {
-  font-weight: 600;
+  font-weight: 400;
+  color: var(--fg);
 }
 
 ::selection {
@@ -637,12 +646,12 @@ html.reduced-motion [data-reveal] {
   margin-bottom: -0.12em;
 }
 
-/* Naskh marks sit well above and below the baseline. Pad the GSAP line
-   mask itself: padding on the inner line is cancelled by its negative
-   margin and then clipped. */
+/* Palestine's ascenders reach the top of its line box and Arabic tails dip
+   well below the baseline. Pad the GSAP line mask itself: padding on the
+   inner line is cancelled by its negative margin and then clipped. */
 .split-mask:lang(ar) .line-mask {
-  padding-block: 0.12em 0.25em;
-  margin-block: -0.12em -0.25em;
+  padding-block: 0.18em 0.3em;
+  margin-block: -0.18em -0.3em;
 }
 
 @keyframes stage-in {
@@ -704,11 +713,13 @@ body:has(:is(input:not([type="checkbox"]), select, textarea):focus) .action-bar 
   cursor: progress;
 }
 
+/* Al Tarikh draws one weight, so Arabic buttons step up in size instead. */
 .btn-prime:lang(ar) {
   font-family: var(--font-body);
+  font-size: var(--text-body);
   letter-spacing: 0;
   text-transform: none;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .btn-prime .btn-fill {
